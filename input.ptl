@@ -1,0 +1,13 @@
+GlobalSettings
+{
+	Display
+	{
+		debugLevel = 4
+		trackOutputOrigins = false
+		colorOutput = false
+	}
+	Memory
+	{
+		allowStackAllocation = false
+	}
+}
