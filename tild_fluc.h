@@ -23,11 +23,12 @@ static void comp_fluc(
 
 static void comp_fluc_i(
     std::vector<double>& phi_fluc,
-    const std::vector<double>& phi,
-    const std::vector<double>& phi2)
+    const std::vector<double>& ab,
+    const std::vector<double>& a,
+    const std::vector<double>& b)
 {
     for (int i = 0; i < phi_fluc.size(); i++)
     {
-        phi_fluc[i] = phi2[i] - phi[i]*phi[i];
+        phi_fluc[i] = ab[i] - a[i]*b[i];
     }
 }

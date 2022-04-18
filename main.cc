@@ -42,9 +42,9 @@ int main(int argc, char** argv)
 		return output;
 	};
 	
-	int start = 980000;
-	int end   = 1057000;
-	int skip = 7000;
+	int start = 1407000;
+	int end   = 1680000;
+	int skip = 3500;
 	int nfiles = 1+(end-start)/skip;
 	
 	auto nxb = domain.GetMeshDataDim();
@@ -65,6 +65,13 @@ int main(int argc, char** argv)
 	std::vector<double>       rhoU_bar(ny, 0.0);
 	std::vector<double>       rhoV_bar(ny, 0.0);
 	std::vector<double>       rhoW_bar(ny, 0.0);
+	std::vector<double>      rhoT2_bar(ny, 0.0);
+	std::vector<double>      rhoU2_bar(ny, 0.0);
+	std::vector<double>      rhoV2_bar(ny, 0.0);
+	std::vector<double>      rhoW2_bar(ny, 0.0);
+	std::vector<double>      rhoUT_bar(ny, 0.0);
+	std::vector<double>      rhoVT_bar(ny, 0.0);
+	std::vector<double>      rhoWT_bar(ny, 0.0);
 	std::vector<double>     rho2T2_bar(ny, 0.0);
 	std::vector<double>     rho2U2_bar(ny, 0.0);
 	std::vector<double>     rho2V2_bar(ny, 0.0);
@@ -86,6 +93,13 @@ int main(int argc, char** argv)
 	std::vector<double>   rhoU_bar_loc(ny, 0.0);
 	std::vector<double>   rhoV_bar_loc(ny, 0.0);
 	std::vector<double>   rhoW_bar_loc(ny, 0.0);
+	std::vector<double>  rhoT2_bar_loc(ny, 0.0);
+	std::vector<double>  rhoU2_bar_loc(ny, 0.0);
+	std::vector<double>  rhoV2_bar_loc(ny, 0.0);
+	std::vector<double>  rhoW2_bar_loc(ny, 0.0);
+	std::vector<double>  rhoUT_bar_loc(ny, 0.0);
+	std::vector<double>  rhoVT_bar_loc(ny, 0.0);
+	std::vector<double>  rhoWT_bar_loc(ny, 0.0);
 	std::vector<double> rho2T2_bar_loc(ny, 0.0);
 	std::vector<double> rho2U2_bar_loc(ny, 0.0);
 	std::vector<double> rho2V2_bar_loc(ny, 0.0);
@@ -123,6 +137,13 @@ int main(int argc, char** argv)
 		compute_average(primsInst,   rhoU_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.u()*prim.p()/(air.R*prim.T());});
 		compute_average(primsInst,   rhoV_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.v()*prim.p()/(air.R*prim.T());});
 		compute_average(primsInst,   rhoW_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.w()*prim.p()/(air.R*prim.T());});
+		compute_average(primsInst,  rhoT2_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.T()*prim.T()*prim.p()/(air.R*prim.T());});
+		compute_average(primsInst,  rhoU2_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.u()*prim.u()*prim.p()/(air.R*prim.T());});
+		compute_average(primsInst,  rhoV2_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.v()*prim.v()*prim.p()/(air.R*prim.T());});
+		compute_average(primsInst,  rhoW2_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.w()*prim.w()*prim.p()/(air.R*prim.T());});
+		compute_average(primsInst,  rhoUT_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.u()*prim.T()*prim.p()/(air.R*prim.T());});
+		compute_average(primsInst,  rhoVT_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.v()*prim.T()*prim.p()/(air.R*prim.T());});
+		compute_average(primsInst,  rhoWT_bar_loc, [=](const prim_t<double>& prim)   -> double {return prim.w()*prim.T()*prim.p()/(air.R*prim.T());});
 		compute_average(primsInst, rho2T2_bar_loc, [=](const prim_t<double>& prim)   -> double {return (prim.T()*prim.p()/(air.R*prim.T()))*(prim.T()*prim.p()/(air.R*prim.T()));});
 		compute_average(primsInst, rho2U2_bar_loc, [=](const prim_t<double>& prim)   -> double {return (prim.u()*prim.p()/(air.R*prim.T()))*(prim.u()*prim.p()/(air.R*prim.T()));});
 		compute_average(primsInst, rho2V2_bar_loc, [=](const prim_t<double>& prim)   -> double {return (prim.v()*prim.p()/(air.R*prim.T()))*(prim.v()*prim.p()/(air.R*prim.T()));});
@@ -144,6 +165,13 @@ int main(int argc, char** argv)
 		accumulate(  rhoU_bar,   rhoU_bar_loc);
 		accumulate(  rhoV_bar,   rhoV_bar_loc);
 		accumulate(  rhoW_bar,   rhoW_bar_loc);
+		accumulate( rhoT2_bar,  rhoT2_bar_loc);
+		accumulate( rhoU2_bar,  rhoU2_bar_loc);
+		accumulate( rhoV2_bar,  rhoV2_bar_loc);
+		accumulate( rhoW2_bar,  rhoW2_bar_loc);
+		accumulate( rhoUT_bar,  rhoUT_bar_loc);
+		accumulate( rhoVT_bar,  rhoVT_bar_loc);
+		accumulate( rhoWT_bar,  rhoWT_bar_loc);
 		accumulate(rho2T2_bar, rho2T2_bar_loc);
 		accumulate(rho2U2_bar, rho2U2_bar_loc);
 		accumulate(rho2V2_bar, rho2V2_bar_loc);
@@ -167,6 +195,13 @@ int main(int argc, char** argv)
 	scl(1.0/nfiles,   rhoU_bar);
 	scl(1.0/nfiles,   rhoV_bar);
 	scl(1.0/nfiles,   rhoW_bar);
+	scl(1.0/nfiles,  rhoT2_bar);
+	scl(1.0/nfiles,  rhoU2_bar);
+	scl(1.0/nfiles,  rhoV2_bar);
+	scl(1.0/nfiles,  rhoW2_bar);
+	scl(1.0/nfiles,  rhoUT_bar);
+	scl(1.0/nfiles,  rhoVT_bar);
+	scl(1.0/nfiles,  rhoWT_bar);
 	scl(1.0/nfiles, rho2T2_bar);
 	scl(1.0/nfiles, rho2U2_bar);
 	scl(1.0/nfiles, rho2V2_bar);
@@ -190,21 +225,55 @@ int main(int argc, char** argv)
 	std::vector<double> v_tilde(ny, 0.0);
 	std::vector<double> w_tilde(ny, 0.0);
 	std::vector<double> T_tilde(ny, 0.0);
+
+	std::vector<double> u2_tilde(ny, 0.0);
+	std::vector<double> v2_tilde(ny, 0.0);
+	std::vector<double> w2_tilde(ny, 0.0);
+	std::vector<double> T2_tilde(ny, 0.0);
+
+	std::vector<double> uT_tilde(ny, 0.0);
+	std::vector<double> vT_tilde(ny, 0.0);
+	std::vector<double> wT_tilde(ny, 0.0);
+
+	std::vector<double> uT_pp(ny, 0.0);
+	std::vector<double> vT_pp(ny, 0.0);
+	std::vector<double> wT_pp(ny, 0.0);
 	
 	comp_tild(u_tilde, rhoU_bar, rho_bar);
 	comp_tild(v_tilde, rhoV_bar, rho_bar);
 	comp_tild(w_tilde, rhoW_bar, rho_bar);
 	comp_tild(T_tilde, rhoT_bar, rho_bar);
+
+	comp_tild(u2_tilde, rhoU2_bar, rho_bar);
+	comp_tild(v2_tilde, rhoV2_bar, rho_bar);
+	comp_tild(w2_tilde, rhoW2_bar, rho_bar);
+
+	comp_tild(uT_tilde, rhoUT_bar, rho_bar);
+	comp_tild(vT_tilde, rhoVT_bar, rho_bar);
+	comp_tild(wT_tilde, rhoWT_bar, rho_bar);
+	
+	comp_tild(T2_tilde, rhoT2_bar, rho_bar);
 	
 	comp_fluc(upp_upp, U_bar, rho_bar, rhoU_bar, rho2U2_bar);
 	comp_fluc(vpp_vpp, V_bar, rho_bar, rhoV_bar, rho2V2_bar);
 	comp_fluc(wpp_wpp, W_bar, rho_bar, rhoW_bar, rho2W2_bar);
 	comp_fluc(Tpp_Tpp, T_bar, rho_bar, rhoT_bar, rho2T2_bar);
 	
-	comp_fluc_i(up_up, U_bar, U2_bar);
-	comp_fluc_i(vp_vp, V_bar, V2_bar);
-	comp_fluc_i(wp_wp, W_bar, W2_bar);
-	comp_fluc_i(Tp_Tp, T_bar, T2_bar);
+	comp_fluc_i(up_up, U2_bar, U_bar, U_bar);
+	comp_fluc_i(vp_vp, V2_bar, V_bar, V_bar);
+	comp_fluc_i(wp_wp, W2_bar, W_bar, W_bar);
+	comp_fluc_i(Tp_Tp, T2_bar, T_bar, T_bar);
+
+	comp_fluc_i(upp_upp, u2_tilde, u_tilde, u_tilde);
+	comp_fluc_i(vpp_vpp, v2_tilde, v_tilde, v_tilde);
+	comp_fluc_i(wpp_wpp, w2_tilde, w_tilde, w_tilde);
+	comp_fluc_i(Tpp_Tpp, T2_tilde, T_tilde, T_tilde);
+
+	comp_fluc_i(uT_pp, uT_tilde, u_tilde, T_tilde);
+	comp_fluc_i(vT_pp, vT_tilde, v_tilde, T_tilde);
+	comp_fluc_i(wT_pp, wT_tilde, w_tilde, T_tilde);
+
+	
 	
 	std::vector<std::string> names;
 	names.push_back("y");
@@ -279,6 +348,7 @@ int main(int argc, char** argv)
 		y_bar, P_bar, u_tilde, v_tilde, w_tilde, T_tilde);
 	
 	save_csv("output/qt.csv", y_bar, q1_turb, q2_turb, q3_turb);
+	save_csv("output/tempFluc.csv", y_bar, uT_pp, vT_pp, wT_pp);
 		
     return 0;
 }

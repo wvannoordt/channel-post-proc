@@ -2,11 +2,11 @@ clear
 clc
 close all
 
-nt = 12;
+nt = 40;
 nj = 9;
 nk = 96;
 
-ij = 9;
+ij = 5;
 
 x = 1;
 p = 2;
