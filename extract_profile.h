@@ -36,8 +36,15 @@ void extract_profile(
                     info.blockBounds[4]+((dtype)ijk[2]+0.5)*info.dx[2]);
                 prim_t<dtype> dataPrimLoc;
                 for (auto n: range(0,5)) dataPrimLoc[n[0]] = data(n[0], ijk[0], ijk[1], ijk[2]);
+                val_grad<3, prim_t<dtype>> qgrad;
+                for (auto n: range(0,5))
+                {
+                    qgrad[0] = (data(n[0], ijk[0]+1, ijk[1],   ijk[2])   - data(n[0], ijk[0]-1, ijk[1],   ijk[2]))  /(2.0*info.dx[0]);
+                    qgrad[1] = (data(n[0], ijk[0],   ijk[1]+1, ijk[2])   - data(n[0], ijk[0],   ijk[1]-1, ijk[2]))  /(2.0*info.dx[1]);
+                    qgrad[2] = (data(n[0], ijk[0],   ijk[1],   ijk[2]+1) - data(n[0], ijk[0],   ijk[1],   ijk[2])-1)/(2.0*info.dx[2]);
+                }
                 int idx = iloc[0] + idx_block[0]*nxb[0];
-                dtype dataNew = detail::forward_prim_callable_reduce_args(func, xyz, ijk, dataPrimLoc, idx);
+                dtype dataNew = detail::forward_prim_callable_reduce_args(func, xyz, ijk, dataPrimLoc, qgrad, idx);
                 output[idx] = dataNew;
             }
         }

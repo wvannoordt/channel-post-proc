@@ -6,6 +6,7 @@
 #include "tild_fluc.h"
 #include "timing.h"
 #include "extract_profile.h"
+#include "timesteps.h"
 #include <stdio.h>
 
 using cmf::print;
@@ -22,13 +23,17 @@ void bin_dump(const std::string& filename, const std::vector<double>& vec)
 
 int main(int argc, char** argv)
 {
+    int start = timesteps::startstep;
+	int end   = timesteps::endstep;
+	int skip  = timesteps::skipstep;
+    
 	std::string inFile = "input.ptl";
 	cmf::ReadInput(inFile);
 	cmf::globalSettings = cmf::GlobalSettings(cmf::mainInput["GlobalSettings"]);
 	cmf::CreateParallelContext(&argc, &argv);
 	
-	std::string gid_file = "data/gridInterpolationInfo_01057000.bin";
-	std::string rba_file = "data/restart_block_arrangement_nt_01057000.dat";
+	std::string gid_file = cmf::strformat("data/gridInterpolationInfo_{}.bin", cmf::ZFill(start,8));
+	std::string rba_file = cmf::strformat("data/restart_block_arrangement_nt_{}.dat", cmf::ZFill(start,8));
 	
 	cmf::LegacyRestartReader reader(gid_file, rba_file);
 	cmf::CartesianMeshInputInfo inputInfo = reader.ReadMeshInfo();
@@ -53,9 +58,6 @@ int main(int argc, char** argv)
 		return output;
 	};
 	
-	int start = 1407000;
-	int end   = 1680000;
-	int skip = 3500;
 	int nfiles = 1+(end-start)/skip;
 	
 	auto nxb = domain.GetMeshDataDim();
@@ -70,20 +72,20 @@ int main(int argc, char** argv)
 	std::vector<double> alldata(whole_size, 0.0);
 	std::size_t storage_idx = 0;
 
-	auto copyTo = [&](std::vector<double>& dest, const std::vector<double> src) -> void
-		      {
-			for (auto& p: src)
-			  {
-			    dest[storage_idx++] = p;
-			  }
-		      };
+    auto copyTo = [&](std::vector<double>& dest, const std::vector<double> src) -> void
+    {
+        for (auto& p: src)
+        {
+            dest[storage_idx++] = p;
+        }
+    };
 	
 	for (auto i: range(0,nfiles))
 	{
-	  std::string filename = strformat("data/restart_unk_nt_{}.dat", ZFill(start+skip*i[0], 8));
-	  print("Reading", filename);
-	  reader.LoadData(primsInst, filename);
-	  transform_inplace(primsInst, cons2prim);
+        std::string filename = strformat("data/restart_unk_nt_{}.dat", ZFill(start+skip*i[0], 8));
+        print("Reading", filename);
+        reader.LoadData(primsInst, filename);
+        transform_inplace(primsInst, cons2prim);
         for (auto k: range(0, nz))
         {
             std::vector<double> profile_X(nx, 0.0);
@@ -96,8 +98,8 @@ int main(int argc, char** argv)
             
             for (auto j: range(0, nj))
             {
-	      {using cmf::strformat; using cmf::ZFill; using cmf::print;
-		print(strformat("Output: nt={}, j={}, k={}", i[0], j[0], k[0]));
+                {using cmf::strformat; using cmf::ZFill; using cmf::print;
+                    print(strformat("Output: nt={}, j={}, k={}", i[0], j[0], k[0]));
                 }
                 extract_profile(primsInst, j[0], k[0], profile_X, [=](const cmf::Vec3<double>& xyz) -> double {return xyz[0];});
                 extract_profile(primsInst, j[0], k[0], profile_P, [=](const prim_t<double>& prim  ) -> double {return prim.p();});
@@ -107,13 +109,13 @@ int main(int argc, char** argv)
                 extract_profile(primsInst, j[0], k[0], profile_T, [=](const prim_t<double>& prim  ) -> double {return prim.T();});
                 extract_profile(primsInst, j[0], k[0], profile_R, [=](const prim_t<double>& prim  ) -> double {return prim.p()/(air.R*prim.T());});
 
-		copyTo(alldata, profile_X);
-		copyTo(alldata, profile_P);
-		copyTo(alldata, profile_U);
-		copyTo(alldata, profile_V);
-		copyTo(alldata, profile_W);
-		copyTo(alldata, profile_T);
-		copyTo(alldata, profile_R);
+                copyTo(alldata, profile_X);
+                copyTo(alldata, profile_P);
+                copyTo(alldata, profile_U);
+                copyTo(alldata, profile_V);
+                copyTo(alldata, profile_W);
+                copyTo(alldata, profile_T);
+                copyTo(alldata, profile_R);
             }
         }
 	}

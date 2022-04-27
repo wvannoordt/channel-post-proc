@@ -6,6 +6,7 @@
 
 #include "range.h"
 #include "fluid_state.h"
+#include "val_grad.h"
 
 template <class T, typename dtype> concept void_reduce_callable = requires(T t)
 {
@@ -15,6 +16,11 @@ template <class T, typename dtype> concept void_reduce_callable = requires(T t)
 template <class T, typename dtype> concept prim_reduce_callable = requires(T t, const prim_t<dtype>& p)
 {
     { t(p) } -> std::same_as<dtype>;
+};
+
+template <class T, typename dtype> concept prim_qgrad_reduce_callable = requires(T t, const prim_t<dtype>& p, const val_grad<3, prim_t<dtype>>& grad)
+{
+    { t(p, grad) } -> std::same_as<dtype>;
 };
 
 template <class T, typename dtype> concept xyz_reduce_callable = requires(T t, const cmf::Vec3<double>& p)
@@ -34,6 +40,7 @@ namespace detail
         const cmf::Vec3<double>& xyz,
         cmf::Vec3<int>& ijk,
         const prim_t<dtype>& prev_data,
+        const val_grad<3, prim_t<dtype>>& grad,
         const std::size_t& jblock)
     {
         return func();
@@ -43,15 +50,29 @@ namespace detail
         const cmf::Vec3<double>& xyz,
         cmf::Vec3<int>& ijk,
         const prim_t<dtype>& prev_data,
+        const val_grad<3, prim_t<dtype>>& grad,
         const std::size_t& jblock)
     {
         return func(prev_data);
     }
+    
+    template <typename dtype, prim_qgrad_reduce_callable<dtype> func_t> dtype forward_prim_callable_reduce_args(
+        const func_t& func,
+        const cmf::Vec3<double>& xyz,
+        cmf::Vec3<int>& ijk,
+        const prim_t<dtype>& prev_data,
+        const val_grad<3, prim_t<dtype>>& grad,
+        const std::size_t& jblock)
+    {
+        return func(prev_data, grad);
+    }
+    
     template <typename dtype, xyz_reduce_callable<dtype> func_t> dtype forward_prim_callable_reduce_args(
         const func_t& func,
         const cmf::Vec3<double>& xyz,
         cmf::Vec3<int>& ijk,
         const prim_t<dtype>& prev_data,
+        const val_grad<3, prim_t<dtype>>& grad,
         const std::size_t& jblock)
     {
         return func(xyz);
@@ -61,6 +82,7 @@ namespace detail
         const cmf::Vec3<double>& xyz,
         cmf::Vec3<int>& ijk,
         const prim_t<dtype>& prev_data,
+        const val_grad<3, prim_t<dtype>>& grad,
         const std::size_t& jblock)
     {
         return func(prev_data, jblock);
@@ -92,12 +114,19 @@ template <class callable, typename dtype=double> void compute_average(cmf::Carte
                 info.blockBounds[2]+((dtype)i[1]+0.5)*info.dx[1],
                 info.blockBounds[4]+((dtype)i[2]+0.5)*info.dx[2]);
             cmf::Vec3<int> ijk(i[0],i[1],i[2]);
-            prim_t<dtype> dataPrimLoc;
-            for (auto n: range(0,5)) dataPrimLoc[n[0]] = data(n[0], i[0], i[1], i[2]);
+            prim_t<dtype> q;
+            for (auto n: range(0,5)) q[n[0]] = data(n[0], i[0], i[1], i[2]);
+            val_grad<3, prim_t<dtype>> qgrad;
+            for (auto n: range(0,5))
+            {
+                qgrad[0] = (data(n[0], i[0]+1, i[1],   i[2])   - data(n[0], i[0]-1, i[1],   i[2]))  /(2.0*info.dx[0]);
+                qgrad[1] = (data(n[0], i[0],   i[1]+1, i[2])   - data(n[0], i[0],   i[1]-1, i[2]))  /(2.0*info.dx[1]);
+                qgrad[2] = (data(n[0], i[0],   i[1],   i[2]+1) - data(n[0], i[0],   i[1],   i[2])-1)/(2.0*info.dx[2]);
+            }
             auto c = lb->GetBlockCenter();
             std::size_t jblock = (int)((c[1]-vb[2]) / (dxDom));
             int idx = i[1] + (j1-j0)*jblock;
-            dtype dataNew = detail::forward_prim_callable_reduce_args(func, xyz, ijk, dataPrimLoc, idx);
+            dtype dataNew = detail::forward_prim_callable_reduce_args(func, xyz, ijk, q, qgrad, idx);
             output[idx] += dataNew;
             counts[idx] ++;
         }
