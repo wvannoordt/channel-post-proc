@@ -9,7 +9,18 @@ template <typename ltype, typename rtype> auto min(const ltype& a, const rtype& 
 {
     return a<b?a:b;
 }
+template <typename ltype, typename rtype> auto max(const ltype& a, const rtype& b)
+{
+    return a>b?a:b;
+}
 
+std::string str_pad(const std::string& str, const char& pad_char, const std::size_t& len)
+{
+    return str;
+    std::string output = str;
+    while (output.length() < len) output += pad_char;
+    return output;
+}
 namespace detail
 {
     template <class indexable_t> std::size_t get_min_size_r(const indexable_t& i)
@@ -21,31 +32,36 @@ namespace detail
         return min(i.size(), get_min_size_r(is...));
     }
 
-    template <class indexable_t> void write_r(std::ofstream& myfile, const std::size_t idx, const indexable_t& i)
+    template <class indexable_t> void write_r(const std::size_t& pad_size, std::ofstream& myfile, const std::size_t idx, const indexable_t& i)
     {
-        myfile << i[idx] << "\n";
+        myfile << str_pad(std::to_string(i[idx]), ' ', pad_size) << "\n";
     }
-    template <class indexable_t, class... indexables_t> void write_r(std::ofstream& myfile, const std::size_t idx, const indexable_t& i, indexables_t... is)
+    template <class indexable_t, class... indexables_t> void write_r(const std::size_t& pad_size, std::ofstream& myfile, const std::size_t idx, const indexable_t& i, indexables_t... is)
     {
-        myfile << i[idx] << ", ";
-        write_r(myfile, idx, is...);
+        myfile << str_pad(std::to_string(i[idx])+',', ' ', pad_size);
+        write_r(pad_size, myfile, idx, is...);
     }
 }
 template <class... indexable_t> static void save_csv(
     const std::string& filename,
-    // const std::vector<std::string> names,
+    const std::vector<std::string> names,
     indexable_t... vecs)
 {
     std::ofstream myfile(filename);
-    // for (int j = 0; j < names.size(); j++)
-    // {
-    //     myfile << names[j];
-    //     if (j<names.size()-1) myfile << ", ";
-    // }
-    // myfile << "\n";
+    std::size_t max_size = 0;
+    for (int j = 0; j < names.size(); j++)
+    {
+        max_size = max(max_size, names[j].length());
+    }
+    std::size_t field_size = 2+max_size;
+    for (int j = 0; j < names.size(); j++)
+    {
+        myfile << str_pad(names[j] + ((j<names.size()-1)?',':' '), ' ', field_size);
+    }
+    myfile << "\n";
     std::size_t minsize = detail::get_min_size_r(vecs...);
     for (std::size_t i = 0; i < minsize; i++)
     {
-        detail::write_r(myfile, i, vecs...);
+        detail::write_r(field_size, myfile, i, vecs...);
     }
 }

@@ -2,6 +2,7 @@
 #include "transform_inplace.h"
 #include "range.h"
 #include "compute_average.h"
+#include "compute_viscdif.h"
 #include "output.h"
 #include "tild_fluc.h"
 #include "timesteps.h"
@@ -61,61 +62,70 @@ int main(int argc, char** argv)
 	
 	std::vector<avg_qty_t<double>*> registry;
 	
-	avg_qty_t<double>          y_bar(ny, a_reg);
-	avg_qty_t<double>          U_bar(ny, a_reg);
-	avg_qty_t<double>          V_bar(ny, a_reg);
-	avg_qty_t<double>          W_bar(ny, a_reg);
-	avg_qty_t<double>          P_bar(ny, a_reg);
-	avg_qty_t<double>          T_bar(ny, a_reg);
-	avg_qty_t<double>         mu_bar(ny, a_reg);
-	avg_qty_t<double>        rho_bar(ny, a_reg);
-	avg_qty_t<double>       rhoT_bar(ny, a_reg);
-	avg_qty_t<double>       rhoU_bar(ny, a_reg);
-	avg_qty_t<double>       rhoV_bar(ny, a_reg);
-	avg_qty_t<double>       rhoW_bar(ny, a_reg);
-	avg_qty_t<double>      rhoT2_bar(ny, a_reg);
-	avg_qty_t<double>      rhoU2_bar(ny, a_reg);
-	avg_qty_t<double>      rhoV2_bar(ny, a_reg);
-	avg_qty_t<double>      rhoW2_bar(ny, a_reg);
-	avg_qty_t<double>      rhoUT_bar(ny, a_reg);
-	avg_qty_t<double>      rhoVT_bar(ny, a_reg);
-	avg_qty_t<double>      rhoWT_bar(ny, a_reg);
-	avg_qty_t<double>     rho2T2_bar(ny, a_reg);
-	avg_qty_t<double>     rho2U2_bar(ny, a_reg);
-	avg_qty_t<double>     rho2V2_bar(ny, a_reg);
-	avg_qty_t<double>     rho2W2_bar(ny, a_reg);
-	avg_qty_t<double>         U2_bar(ny, a_reg);
-	avg_qty_t<double>         V2_bar(ny, a_reg);
-	avg_qty_t<double>         W2_bar(ny, a_reg);
-	avg_qty_t<double>         T2_bar(ny, a_reg);
-	avg_qty_t<double>     tau_00_bar(ny, a_reg);
-	avg_qty_t<double>     tau_01_bar(ny, a_reg);
-	avg_qty_t<double>     tau_02_bar(ny, a_reg);
-	avg_qty_t<double>     tau_10_bar(ny, a_reg);
-	avg_qty_t<double>     tau_11_bar(ny, a_reg);
-	avg_qty_t<double>     tau_12_bar(ny, a_reg);
-	avg_qty_t<double>     tau_20_bar(ny, a_reg);
-	avg_qty_t<double>     tau_21_bar(ny, a_reg);
-	avg_qty_t<double>     tau_22_bar(ny, a_reg);
-	avg_qty_t<double>     gru_00_bar(ny, a_reg);
-	avg_qty_t<double>     gru_01_bar(ny, a_reg);
-	avg_qty_t<double>     gru_02_bar(ny, a_reg);
-	avg_qty_t<double>     gru_10_bar(ny, a_reg);
-	avg_qty_t<double>     gru_11_bar(ny, a_reg);
-	avg_qty_t<double>     gru_12_bar(ny, a_reg);
-	avg_qty_t<double>     gru_20_bar(ny, a_reg);
-	avg_qty_t<double>     gru_21_bar(ny, a_reg);
-	avg_qty_t<double>     gru_22_bar(ny, a_reg);
-	avg_qty_t<double>   tau_u_00_bar(ny, a_reg);
-	avg_qty_t<double>   tau_u_01_bar(ny, a_reg);
-	avg_qty_t<double>   tau_u_02_bar(ny, a_reg);
-	avg_qty_t<double>   tau_u_10_bar(ny, a_reg);
-	avg_qty_t<double>   tau_u_11_bar(ny, a_reg);
-	avg_qty_t<double>   tau_u_12_bar(ny, a_reg);
-	avg_qty_t<double>   tau_u_20_bar(ny, a_reg);
-	avg_qty_t<double>   tau_u_21_bar(ny, a_reg);
-	avg_qty_t<double>   tau_u_22_bar(ny, a_reg);
-	avg_qty_t<double>       dpdy_bar(ny, a_reg);
+	avg_qty_t<double>            y_bar(ny, registry);
+	avg_qty_t<double>            U_bar(ny, registry);
+	avg_qty_t<double>            V_bar(ny, registry);
+	avg_qty_t<double>            W_bar(ny, registry);
+	avg_qty_t<double>            P_bar(ny, registry);
+	avg_qty_t<double>            T_bar(ny, registry);
+	avg_qty_t<double>           mu_bar(ny, registry);
+	avg_qty_t<double>          rho_bar(ny, registry);
+	avg_qty_t<double>         rhoT_bar(ny, registry);
+	avg_qty_t<double>         rhoU_bar(ny, registry);
+	avg_qty_t<double>         rhoV_bar(ny, registry);
+	avg_qty_t<double>         rhoW_bar(ny, registry);
+	avg_qty_t<double>        rhoT2_bar(ny, registry);
+	avg_qty_t<double>        rhoU2_bar(ny, registry);
+	avg_qty_t<double>        rhoV2_bar(ny, registry);
+	avg_qty_t<double>        rhoW2_bar(ny, registry);
+	avg_qty_t<double>        rhoUT_bar(ny, registry);
+	avg_qty_t<double>        rhoVT_bar(ny, registry);
+	avg_qty_t<double>        rhoWT_bar(ny, registry);
+	avg_qty_t<double>       rho2T2_bar(ny, registry);
+	avg_qty_t<double>       rho2U2_bar(ny, registry);
+	avg_qty_t<double>       rho2V2_bar(ny, registry);
+	avg_qty_t<double>       rho2W2_bar(ny, registry);
+	avg_qty_t<double>           U2_bar(ny, registry);
+	avg_qty_t<double>           V2_bar(ny, registry);
+	avg_qty_t<double>           W2_bar(ny, registry);
+	avg_qty_t<double>           T2_bar(ny, registry);
+	avg_qty_t<double>       tau_00_bar(ny, registry);
+	avg_qty_t<double>       tau_01_bar(ny, registry);
+	avg_qty_t<double>       tau_02_bar(ny, registry);
+	avg_qty_t<double>       tau_10_bar(ny, registry);
+	avg_qty_t<double>       tau_11_bar(ny, registry);
+	avg_qty_t<double>       tau_12_bar(ny, registry);
+	avg_qty_t<double>       tau_20_bar(ny, registry);
+	avg_qty_t<double>       tau_21_bar(ny, registry);
+	avg_qty_t<double>       tau_22_bar(ny, registry);
+	avg_qty_t<double>       gru_00_bar(ny, registry);
+	avg_qty_t<double>       gru_01_bar(ny, registry);
+	avg_qty_t<double>       gru_02_bar(ny, registry);
+	avg_qty_t<double>       gru_10_bar(ny, registry);
+	avg_qty_t<double>       gru_11_bar(ny, registry);
+	avg_qty_t<double>       gru_12_bar(ny, registry);
+	avg_qty_t<double>       gru_20_bar(ny, registry);
+	avg_qty_t<double>       gru_21_bar(ny, registry);
+	avg_qty_t<double>       gru_22_bar(ny, registry);
+	avg_qty_t<double>     tau_u_00_bar(ny, registry);
+	avg_qty_t<double>     tau_u_01_bar(ny, registry);
+	avg_qty_t<double>     tau_u_02_bar(ny, registry);
+	avg_qty_t<double>     tau_u_10_bar(ny, registry);
+	avg_qty_t<double>     tau_u_11_bar(ny, registry);
+	avg_qty_t<double>     tau_u_12_bar(ny, registry);
+	avg_qty_t<double>     tau_u_20_bar(ny, registry);
+	avg_qty_t<double>     tau_u_21_bar(ny, registry);
+	avg_qty_t<double>     tau_u_22_bar(ny, registry);
+	avg_qty_t<double>         dpdy_bar(ny, registry);
+	avg_qty_t<double>   tau_g_00_0_bar(ny, registry);
+	avg_qty_t<double>   tau_g_01_1_bar(ny, registry);
+	avg_qty_t<double>   tau_g_02_2_bar(ny, registry);
+	avg_qty_t<double>   tau_g_10_0_bar(ny, registry);
+	avg_qty_t<double>   tau_g_11_1_bar(ny, registry);
+	avg_qty_t<double>   tau_g_12_2_bar(ny, registry);
+	avg_qty_t<double>   tau_g_20_0_bar(ny, registry);
+	avg_qty_t<double>   tau_g_21_1_bar(ny, registry);
+	avg_qty_t<double>   tau_g_22_2_bar(ny, registry);
 	
 	auto accumulate = [](std::vector<double>& a, const std::vector<double>& b) -> void
 	{
@@ -187,6 +197,19 @@ int main(int argc, char** argv)
 		compute_average(primsInst,   gru_20_bar.inst_data, [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[0].w();});
 		compute_average(primsInst,   gru_21_bar.inst_data, [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].w();});
 		compute_average(primsInst,   gru_22_bar.inst_data, [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[2].w();});
+		compute_average(primsInst,   dpdy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].p();});
+		
+		compute_viscdif(primsInst, visc,
+			tau_g_00_0_bar.inst_data,
+			tau_g_01_1_bar.inst_data,
+			tau_g_02_2_bar.inst_data,
+			tau_g_10_0_bar.inst_data,
+			tau_g_11_1_bar.inst_data,
+			tau_g_12_2_bar.inst_data,
+			tau_g_20_0_bar.inst_data,
+			tau_g_21_1_bar.inst_data,
+			tau_g_22_2_bar.inst_data);
+		for (auto a:registry) a->accum();
 	}
 	
 	std::vector<double> upp_upp(ny, 0.0);
@@ -226,41 +249,42 @@ int main(int argc, char** argv)
 	std::vector<double> A20(ny, 0.0);
 	std::vector<double> A21(ny, 0.0);
 	std::vector<double> A22(ny, 0.0);
+	std::vector<double> C10(ny, 0.0);
 	
-	comp_fluc_i(A00, tau_u_00_bar, tau_00_bar, gru_00_bar);
-	comp_fluc_i(A01, tau_u_01_bar, tau_01_bar, gru_01_bar);
-	comp_fluc_i(A02, tau_u_02_bar, tau_02_bar, gru_02_bar);
-	comp_fluc_i(A10, tau_u_10_bar, tau_10_bar, gru_10_bar);
-	comp_fluc_i(A11, tau_u_11_bar, tau_11_bar, gru_11_bar);
-	comp_fluc_i(A12, tau_u_12_bar, tau_12_bar, gru_12_bar);
-	comp_fluc_i(A20, tau_u_20_bar, tau_20_bar, gru_20_bar);
-	comp_fluc_i(A21, tau_u_21_bar, tau_21_bar, gru_21_bar);
-	comp_fluc_i(A22, tau_u_22_bar, tau_22_bar, gru_22_bar);
+	comp_fluc_i(A00, tau_u_00_bar.accumulated_data, tau_00_bar.accumulated_data, gru_00_bar.accumulated_data);
+	comp_fluc_i(A01, tau_u_01_bar.accumulated_data, tau_01_bar.accumulated_data, gru_01_bar.accumulated_data);
+	comp_fluc_i(A02, tau_u_02_bar.accumulated_data, tau_02_bar.accumulated_data, gru_02_bar.accumulated_data);
+	comp_fluc_i(A10, tau_u_10_bar.accumulated_data, tau_10_bar.accumulated_data, gru_10_bar.accumulated_data);
+	comp_fluc_i(A11, tau_u_11_bar.accumulated_data, tau_11_bar.accumulated_data, gru_11_bar.accumulated_data);
+	comp_fluc_i(A12, tau_u_12_bar.accumulated_data, tau_12_bar.accumulated_data, gru_12_bar.accumulated_data);
+	comp_fluc_i(A20, tau_u_20_bar.accumulated_data, tau_20_bar.accumulated_data, gru_20_bar.accumulated_data);
+	comp_fluc_i(A21, tau_u_21_bar.accumulated_data, tau_21_bar.accumulated_data, gru_21_bar.accumulated_data);
+	comp_fluc_i(A22, tau_u_22_bar.accumulated_data, tau_22_bar.accumulated_data, gru_22_bar.accumulated_data);
 	
-	comp_tild(u_tilde, rhoU_bar, rho_bar);
-	comp_tild(v_tilde, rhoV_bar, rho_bar);
-	comp_tild(w_tilde, rhoW_bar, rho_bar);
-	comp_tild(T_tilde, rhoT_bar, rho_bar);
+	comp_tild(u_tilde, rhoU_bar.accumulated_data, rho_bar.accumulated_data);
+	comp_tild(v_tilde, rhoV_bar.accumulated_data, rho_bar.accumulated_data);
+	comp_tild(w_tilde, rhoW_bar.accumulated_data, rho_bar.accumulated_data);
+	comp_tild(T_tilde, rhoT_bar.accumulated_data, rho_bar.accumulated_data);
 
-	comp_tild(u2_tilde, rhoU2_bar, rho_bar);
-	comp_tild(v2_tilde, rhoV2_bar, rho_bar);
-	comp_tild(w2_tilde, rhoW2_bar, rho_bar);
+	comp_tild(u2_tilde, rhoU2_bar.accumulated_data, rho_bar.accumulated_data);
+	comp_tild(v2_tilde, rhoV2_bar.accumulated_data, rho_bar.accumulated_data);
+	comp_tild(w2_tilde, rhoW2_bar.accumulated_data, rho_bar.accumulated_data);
 
-	comp_tild(uT_tilde, rhoUT_bar, rho_bar);
-	comp_tild(vT_tilde, rhoVT_bar, rho_bar);
-	comp_tild(wT_tilde, rhoWT_bar, rho_bar);
+	comp_tild(uT_tilde, rhoUT_bar.accumulated_data, rho_bar.accumulated_data);
+	comp_tild(vT_tilde, rhoVT_bar.accumulated_data, rho_bar.accumulated_data);
+	comp_tild(wT_tilde, rhoWT_bar.accumulated_data, rho_bar.accumulated_data);
 	
-	comp_tild(T2_tilde, rhoT2_bar, rho_bar);
+	comp_tild(T2_tilde, rhoT2_bar.accumulated_data, rho_bar.accumulated_data);
 	
-	comp_fluc(upp_upp, U_bar, rho_bar, rhoU_bar, rho2U2_bar);
-	comp_fluc(vpp_vpp, V_bar, rho_bar, rhoV_bar, rho2V2_bar);
-	comp_fluc(wpp_wpp, W_bar, rho_bar, rhoW_bar, rho2W2_bar);
-	comp_fluc(Tpp_Tpp, T_bar, rho_bar, rhoT_bar, rho2T2_bar);
+	comp_fluc(upp_upp, U_bar.accumulated_data, rho_bar.accumulated_data, rhoU_bar.accumulated_data, rho2U2_bar.accumulated_data);
+	comp_fluc(vpp_vpp, V_bar.accumulated_data, rho_bar.accumulated_data, rhoV_bar.accumulated_data, rho2V2_bar.accumulated_data);
+	comp_fluc(wpp_wpp, W_bar.accumulated_data, rho_bar.accumulated_data, rhoW_bar.accumulated_data, rho2W2_bar.accumulated_data);
+	comp_fluc(Tpp_Tpp, T_bar.accumulated_data, rho_bar.accumulated_data, rhoT_bar.accumulated_data, rho2T2_bar.accumulated_data);
 	
-	comp_fluc_i(up_up, U2_bar, U_bar, U_bar);
-	comp_fluc_i(vp_vp, V2_bar, V_bar, V_bar);
-	comp_fluc_i(wp_wp, W2_bar, W_bar, W_bar);
-	comp_fluc_i(Tp_Tp, T2_bar, T_bar, T_bar);
+	comp_fluc_i(up_up, U2_bar.accumulated_data, U_bar.accumulated_data, U_bar.accumulated_data);
+	comp_fluc_i(vp_vp, V2_bar.accumulated_data, V_bar.accumulated_data, V_bar.accumulated_data);
+	comp_fluc_i(wp_wp, W2_bar.accumulated_data, W_bar.accumulated_data, W_bar.accumulated_data);
+	comp_fluc_i(Tp_Tp, T2_bar.accumulated_data, T_bar.accumulated_data, T_bar.accumulated_data);
 
 	comp_fluc_i(upp_upp, u2_tilde, u_tilde, u_tilde);
 	comp_fluc_i(vpp_vpp, v2_tilde, v_tilde, v_tilde);
@@ -271,36 +295,17 @@ int main(int argc, char** argv)
 	comp_fluc_i(vT_pp, vT_tilde, v_tilde, T_tilde);
 	comp_fluc_i(wT_pp, wT_tilde, w_tilde, T_tilde);
 
+	for (std::size_t i = 0; i < C10.size(); i++)
+	{
+		C10[i] = (u_tilde[i] - U_bar[i]) * dpdy_bar[i];
+	}
 	
-	
-	std::vector<std::string> names;
-	names.push_back("y");
-	names.push_back("mu_bar");
-	names.push_back("rho_bar");
-	names.push_back("u_bar");
-	names.push_back("v_bar");
-	names.push_back("w_bar");
-	names.push_back("T_bar");
-	names.push_back("P_bar");
-	names.push_back("u_tilde");
-	names.push_back("v_tilde");
-	names.push_back("w_tilde");
-	names.push_back("T_tilde");
-	names.push_back("u\'");
-	names.push_back("v\'");
-	names.push_back("w\'");
-	names.push_back("T\'");
-	names.push_back("u\'\'");
-	names.push_back("v\'\'");
-	names.push_back("w\'\'");
-	names.push_back("T\'\'");
 
-	std::vector<double>     q1_turb_loc(ny, 0.0);
-	std::vector<double>     q1_turb    (ny, 0.0);
-	std::vector<double>     q2_turb_loc(ny, 0.0);
-	std::vector<double>     q2_turb    (ny, 0.0);
-	std::vector<double>     q3_turb_loc(ny, 0.0);
-	std::vector<double>     q3_turb    (ny, 0.0);
+	std::vector<avg_qty_t<double>*> registry2;
+	avg_qty_t<double> q1_turb(ny, registry2);
+	avg_qty_t<double> q2_turb(ny, registry2);
+	avg_qty_t<double> q3_turb(ny, registry2);
+	
 	
 	for (auto i: range(0,nfiles))
 	{
@@ -309,46 +314,47 @@ int main(int argc, char** argv)
 		reader.LoadData(primsInst, filename);
 		transform_inplace(primsInst, cons2prim);
 		
-		compute_average(primsInst, q1_turb_loc, [&](const prim_t<double>& prim, const std::size_t& y_index) -> double
+		compute_average(primsInst, q1_turb.inst_data, [&](const prim_t<double>& prim, const std::size_t& y_index) -> double
 		{
 			double dens = prim.p()/(air.R*prim.T());
 			return dens*(prim.u()-U_bar[y_index])*(prim.T()-T_bar[y_index]);
 		});
 		
-		compute_average(primsInst, q2_turb_loc, [&](const prim_t<double>& prim, const std::size_t& y_index) -> double
+		compute_average(primsInst, q2_turb.inst_data, [&](const prim_t<double>& prim, const std::size_t& y_index) -> double
 		{
 			double dens = prim.p()/(air.R*prim.T());
 			return dens*(prim.v()-V_bar[y_index])*(prim.T()-T_bar[y_index]);
 		});
 		
-		compute_average(primsInst, q3_turb_loc, [&](const prim_t<double>& prim, const std::size_t& y_index) -> double
+		compute_average(primsInst, q3_turb.inst_data, [&](const prim_t<double>& prim, const std::size_t& y_index) -> double
 		{
 			double dens = prim.p()/(air.R*prim.T());
 			return dens*(prim.w()-W_bar[y_index])*(prim.T()-T_bar[y_index]);
 		});
-		
-		accumulate(q1_turb, q1_turb_loc);
-		accumulate(q2_turb, q2_turb_loc);
-		accumulate(q3_turb, q3_turb_loc);
+		for (auto a:registry2) a->accum();
 	}
 	
-	scl(1.0/nfiles, q1_turb);
-	scl(1.0/nfiles, q2_turb);
-	scl(1.0/nfiles, q3_turb);
-	
-	save_csv("output/data.csv",// names,
-		y_bar, mu_bar, rho_bar, U_bar, V_bar, W_bar, T_bar, P_bar, 
-		u_tilde, v_tilde, w_tilde, T_tilde,
-		up_up, vp_vp, wp_wp, Tp_Tp,
-		upp_upp, vpp_vpp, wpp_wpp, Tpp_Tpp);
-		
-	save_csv("output/flowmeandata.csv",// names,
-		y_bar, P_bar, u_tilde, v_tilde, w_tilde, T_tilde);
-	
-	save_csv("output/qt.csv", y_bar, q1_turb, q2_turb, q3_turb);
-	save_csv("output/tempFluc.csv", y_bar, uT_pp, vT_pp, wT_pp);
-	
-	save_csv("output/vischeatterms.csv", A00, A01, A02, A10, A11, A12, A20, A21, A22, dpdy_bar);
+	std::vector<std::string> names {"y", "mu_bar", "rho_bar", "U_bar", "V_bar",
+									"W_bar", "T_bar", "P_bar", "u_tilde", "v_tilde",
+									"w_tilde", "T_tilde", "up_up", "vp_vp", "wp_wp",
+									"Tp_Tp", "upp_upp", "vpp_vpp", "wpp_wpp", "Tpp_Tpp",
+									"P_bar", "u_tilde", "v_tilde", "w_tilde", "T_tilde",
+									"q1_turb", "q2_turb", "q3_turb", "uT_pp", "vT_pp", "wT_pp",
+									"A00", "A01", "A02", "A10", "A11", "A12", "A20", "A21", "A22",
+									"C10", "dpdy_bar",
+									"dtau_00_dx", "dtau_01_dy", "dtau_02_dz"
+									"dtau_10_dx", "dtau_11_dy", "dtau_12_dz"
+									"dtau_20_dx", "dtau_21_dy", "dtau_22_dz"};
+									
+	save_csv("output/data.csv", names,  y_bar, mu_bar, rho_bar, U_bar,
+										V_bar, W_bar, T_bar, P_bar, u_tilde, v_tilde, w_tilde,
+										T_tilde, up_up, vp_vp, wp_wp, Tp_Tp, upp_upp, vpp_vpp,
+										wpp_wpp, Tpp_Tpp, P_bar, u_tilde, v_tilde, w_tilde, T_tilde,
+										q1_turb, q2_turb, q3_turb, uT_pp, vT_pp, wT_pp,
+										A00, A01, A02, A10, A11, A12, A20, A21, A22, C10, dpdy_bar,
+										tau_g_00_0_bar, tau_g_01_1_bar, tau_g_02_2_bar, tau_g_10_0_bar,
+										tau_g_11_1_bar, tau_g_12_2_bar, tau_g_20_0_bar, tau_g_21_1_bar,
+										tau_g_22_2_bar);
 		
     return 0;
 }

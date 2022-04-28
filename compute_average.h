@@ -119,9 +119,9 @@ template <class callable, typename dtype=double> void compute_average(cmf::Carte
             val_grad<3, prim_t<dtype>> qgrad;
             for (auto n: range(0,5))
             {
-                qgrad[0] = (data(n[0], i[0]+1, i[1],   i[2])   - data(n[0], i[0]-1, i[1],   i[2]))  /(2.0*info.dx[0]);
-                qgrad[1] = (data(n[0], i[0],   i[1]+1, i[2])   - data(n[0], i[0],   i[1]-1, i[2]))  /(2.0*info.dx[1]);
-                qgrad[2] = (data(n[0], i[0],   i[1],   i[2]+1) - data(n[0], i[0],   i[1],   i[2])-1)/(2.0*info.dx[2]);
+                qgrad[0][n[0]] = (data(n[0], i[0]+1, i[1],   i[2])   - data(n[0], i[0]-1, i[1],   i[2]))  /(2.0*info.dx[0]);
+                qgrad[1][n[0]] = (data(n[0], i[0],   i[1]+1, i[2])   - data(n[0], i[0],   i[1]-1, i[2]))  /(2.0*info.dx[1]);
+                qgrad[2][n[0]] = (data(n[0], i[0],   i[1],   i[2]+1) - data(n[0], i[0],   i[1],   i[2])-1)/(2.0*info.dx[2]);
             }
             auto c = lb->GetBlockCenter();
             std::size_t jblock = (int)((c[1]-vb[2]) / (dxDom));
