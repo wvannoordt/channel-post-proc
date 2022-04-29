@@ -56,7 +56,7 @@ template <class... indexable_t> static void save_csv(
     std::size_t field_size = 2+max_size;
     for (int j = 0; j < names.size(); j++)
     {
-        myfile << str_pad(names[j] + ((j<names.size()-1)?',':' '), ' ', field_size);
+        myfile << str_pad(names[j] + "[" + std::to_string(j) + "]" + ((j<names.size()-1)?',':' '), ' ', field_size);
     }
     myfile << "\n";
     std::size_t minsize = detail::get_min_size_r(vecs...);

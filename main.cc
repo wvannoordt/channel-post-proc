@@ -342,8 +342,8 @@ int main(int argc, char** argv)
 									"q1_turb", "q2_turb", "q3_turb", "uT_pp", "vT_pp", "wT_pp",
 									"A00", "A01", "A02", "A10", "A11", "A12", "A20", "A21", "A22",
 									"C10", "dpdy_bar",
-									"dtau_00_dx", "dtau_01_dy", "dtau_02_dz"
-									"dtau_10_dx", "dtau_11_dy", "dtau_12_dz"
+									"dtau_00_dx", "dtau_01_dy", "dtau_02_dz",
+									"dtau_10_dx", "dtau_11_dy", "dtau_12_dz",
 									"dtau_20_dx", "dtau_21_dy", "dtau_22_dz"};
 									
 	save_csv("output/data.csv", names,  y_bar, mu_bar, rho_bar, U_bar,
