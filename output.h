@@ -54,6 +54,7 @@ template <class... indexable_t> static void save_csv(
         max_size = max(max_size, names[j].length());
     }
     std::size_t field_size = 2+max_size;
+    myfile << "#";
     for (int j = 0; j < names.size(); j++)
     {
         myfile << str_pad(names[j] + "[" + std::to_string(j) + "]" + ((j<names.size()-1)?',':' '), ' ', field_size);

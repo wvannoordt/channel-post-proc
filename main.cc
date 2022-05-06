@@ -126,6 +126,13 @@ int main(int argc, char** argv)
 	avg_qty_t<double>   tau_g_20_0_bar(ny, registry);
 	avg_qty_t<double>   tau_g_21_1_bar(ny, registry);
 	avg_qty_t<double>   tau_g_22_2_bar(ny, registry);
+	avg_qty_t<double>         p_ux_bar(ny, registry);
+	avg_qty_t<double>         p_vy_bar(ny, registry);
+	avg_qty_t<double>         p_wz_bar(ny, registry);
+	avg_qty_t<double>           ux_bar(ny, registry);
+	avg_qty_t<double>           vy_bar(ny, registry);
+	avg_qty_t<double>           wz_bar(ny, registry);
+	
 	
 	auto accumulate = [](std::vector<double>& a, const std::vector<double>& b) -> void
 	{
@@ -198,6 +205,12 @@ int main(int argc, char** argv)
 		compute_average(primsInst,   gru_21_bar.inst_data, [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].w();});
 		compute_average(primsInst,   gru_22_bar.inst_data, [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[2].w();});
 		compute_average(primsInst,   dpdy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].p();});
+		compute_average(primsInst,   p_ux_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim.p()*prim_grad[0].u();});
+		compute_average(primsInst,   p_vy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim.p()*prim_grad[1].v();});
+		compute_average(primsInst,   p_wz_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim.p()*prim_grad[2].w();});
+		compute_average(primsInst,     ux_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[0].u();});
+		compute_average(primsInst,     vy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].v();});
+		compute_average(primsInst,     wz_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[2].w();});
 		
 		compute_viscdif(primsInst, visc,
 			tau_g_00_0_bar.inst_data,
@@ -251,6 +264,13 @@ int main(int argc, char** argv)
 	std::vector<double> A22(ny, 0.0);
 	std::vector<double> C10(ny, 0.0);
 	
+	std::vector<double> D0 (ny, 0.0);
+	std::vector<double> D1 (ny, 0.0);
+	std::vector<double> D2 (ny, 0.0);
+	std::vector<double> B00(ny, 0.0);
+	std::vector<double> B01(ny, 0.0);
+	std::vector<double> B02(ny, 0.0);
+	
 	comp_fluc_i(A00, tau_u_00_bar.accumulated_data, tau_00_bar.accumulated_data, gru_00_bar.accumulated_data);
 	comp_fluc_i(A01, tau_u_01_bar.accumulated_data, tau_01_bar.accumulated_data, gru_01_bar.accumulated_data);
 	comp_fluc_i(A02, tau_u_02_bar.accumulated_data, tau_02_bar.accumulated_data, gru_02_bar.accumulated_data);
@@ -298,6 +318,12 @@ int main(int argc, char** argv)
 	for (std::size_t i = 0; i < C10.size(); i++)
 	{
 		C10[i] = (u_tilde[i] - U_bar[i]) * dpdy_bar[i];
+		D0[i]  = P_bar[i]*ux_bar[i]-p_ux_bar[i];
+		D1[i]  = P_bar[i]*vy_bar[i]-p_vy_bar[i];
+		D2[i]  = P_bar[i]*wz_bar[i]-p_wz_bar[i];
+		B00[i] = (u_tilde[i] - U_bar[i])*tau_g_00_0_bar[i];
+		B01[i] = (u_tilde[i] - U_bar[i])*tau_g_01_1_bar[i];
+		B02[i] = (u_tilde[i] - U_bar[i])*tau_g_02_2_bar[i];
 	}
 	
 
@@ -344,7 +370,7 @@ int main(int argc, char** argv)
 									"C10", "dpdy_bar",
 									"dtau_00_dx", "dtau_01_dy", "dtau_02_dz",
 									"dtau_10_dx", "dtau_11_dy", "dtau_12_dz",
-									"dtau_20_dx", "dtau_21_dy", "dtau_22_dz"};
+									"dtau_20_dx", "dtau_21_dy", "dtau_22_dz", "D0", "B00", "B01", "B02"};
 									
 	save_csv("output/data.csv", names,  y_bar, mu_bar, rho_bar, U_bar,
 										V_bar, W_bar, T_bar, P_bar, u_tilde, v_tilde, w_tilde,
@@ -354,7 +380,8 @@ int main(int argc, char** argv)
 										A00, A01, A02, A10, A11, A12, A20, A21, A22, C10, dpdy_bar,
 										tau_g_00_0_bar, tau_g_01_1_bar, tau_g_02_2_bar, tau_g_10_0_bar,
 										tau_g_11_1_bar, tau_g_12_2_bar, tau_g_20_0_bar, tau_g_21_1_bar,
-										tau_g_22_2_bar);
+										tau_g_22_2_bar,
+										D0, B00, B01, B02);
 		
     return 0;
 }
