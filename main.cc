@@ -317,7 +317,7 @@ int main(int argc, char** argv)
 
 	for (std::size_t i = 0; i < C10.size(); i++)
 	{
-		C10[i] = (u_tilde[i] - U_bar[i]) * dpdy_bar[i];
+		C10[i] = (U_bar[i] - u_tilde[i]) * dpdy_bar[i];
 		D0[i]  = P_bar[i]*ux_bar[i]-p_ux_bar[i];
 		D1[i]  = P_bar[i]*vy_bar[i]-p_vy_bar[i];
 		D2[i]  = P_bar[i]*wz_bar[i]-p_wz_bar[i];
@@ -370,18 +370,19 @@ int main(int argc, char** argv)
 									"C10", "dpdy_bar",
 									"dtau_00_dx", "dtau_01_dy", "dtau_02_dz",
 									"dtau_10_dx", "dtau_11_dy", "dtau_12_dz",
-									"dtau_20_dx", "dtau_21_dy", "dtau_22_dz", "D0", "B00", "B01", "B02"};
+									"dtau_20_dx", "dtau_21_dy", "dtau_22_dz", "D0", "D1", "D2", "B00", "B01", "B02"};
 									
-	save_csv("output/data.csv", names,  y_bar, mu_bar, rho_bar, U_bar,
-										V_bar, W_bar, T_bar, P_bar, u_tilde, v_tilde, w_tilde,
-										T_tilde, up_up, vp_vp, wp_wp, Tp_Tp, upp_upp, vpp_vpp,
-										wpp_wpp, Tpp_Tpp, P_bar, u_tilde, v_tilde, w_tilde, T_tilde,
-										q1_turb, q2_turb, q3_turb, uT_pp, vT_pp, wT_pp,
-										A00, A01, A02, A10, A11, A12, A20, A21, A22, C10, dpdy_bar,
-										tau_g_00_0_bar, tau_g_01_1_bar, tau_g_02_2_bar, tau_g_10_0_bar,
-										tau_g_11_1_bar, tau_g_12_2_bar, tau_g_20_0_bar, tau_g_21_1_bar,
-										tau_g_22_2_bar,
-										D0, B00, B01, B02);
+	save_csv("output/data.csv", y_bar, mu_bar, rho_bar, U_bar,
+								V_bar, W_bar, T_bar, P_bar, u_tilde, v_tilde, w_tilde,
+								T_tilde, up_up, vp_vp, wp_wp, Tp_Tp, upp_upp, vpp_vpp,
+								wpp_wpp, Tpp_Tpp, P_bar, u_tilde, v_tilde, w_tilde, T_tilde,
+								q1_turb, q2_turb, q3_turb, uT_pp, vT_pp, wT_pp,
+								A00, A01, A02, A10, A11, A12, A20, A21, A22, C10, dpdy_bar,
+								tau_g_00_0_bar, tau_g_01_1_bar, tau_g_02_2_bar, tau_g_10_0_bar,
+								tau_g_11_1_bar, tau_g_12_2_bar, tau_g_20_0_bar, tau_g_21_1_bar,
+								tau_g_22_2_bar,
+								D0, D1, D2, B00, B01, B02);
+	save_names("output/names.dat", names);
 		
     return 0;
 }

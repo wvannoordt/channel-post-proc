@@ -7,20 +7,26 @@ oxdata = oxdata(1:floor(end/2),:);
 y_ox = oxdata(:,1);
 utild_ox = oxdata(:,9);
 Ttild_ox = oxdata(:,12);
+c10_ox   = oxdata(:,41);
+a00_ox   = oxdata(:,32);
+a01_ox   = oxdata(:,33);
+a02_ox   = oxdata(:,34);
+a10_ox   = oxdata(:,35);
+a11_ox   = oxdata(:,36);
+a12_ox   = oxdata(:,37);
+a20_ox   = oxdata(:,38);
+a21_ox   = oxdata(:,39);
+a22_ox   = oxdata(:,40);
 
-utild_cs = load('purdue/cs-u.dat');
-y_cs = utild_cs(:,1)-1;
-utild_cs = utild_cs(:,2);
-
-Ttild_cs = load('purdue/cs-T.dat');
-Ttild_cs = Ttild_cs(:,2);
-
-figure
-hold on
-plot(y_ox, utild_ox)
-plot(y_cs, utild_cs)
-
-figure
-hold on
-plot(y_ox, Ttild_ox)
-plot(y_cs, Ttild_cs)
+create_fig(oxdata, 9,  'purdue/cs-u.csv', 'U tilde', 'png/utild.png');
+create_fig(oxdata, 12, 'purdue/cs-T.csv', 'T tilde', 'png/Ttild.png');
+create_fig(oxdata, 41, 'purdue/cs-c10.csv', 'C10', 'png/c10.png');
+create_fig(oxdata, 32, 'purdue/cs-a00.csv', 'A00', 'png/a00.png');
+create_fig(oxdata, 33, 'purdue/cs-a01.csv', 'A01', 'png/a01.png');
+create_fig(oxdata, 34, 'purdue/cs-a02.csv', 'A02', 'png/a02.png');
+create_fig(oxdata, 35, 'purdue/cs-a10.csv', 'A10', 'png/a10.png');
+create_fig(oxdata, 36, 'purdue/cs-a11.csv', 'A11', 'png/a11.png');
+create_fig(oxdata, 37, 'purdue/cs-a12.csv', 'A12', 'png/a12.png');
+create_fig(oxdata, 35, 'purdue/cs-a20.csv', 'A20', 'png/a20.png');
+create_fig(oxdata, 36, 'purdue/cs-a21.csv', 'A21', 'png/a21.png');
+create_fig(oxdata, 37, 'purdue/cs-a22.csv', 'A22', 'png/a22.png');

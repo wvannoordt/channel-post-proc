@@ -44,25 +44,25 @@ namespace detail
 }
 template <class... indexable_t> static void save_csv(
     const std::string& filename,
-    const std::vector<std::string>& names,
     indexable_t... vecs)
 {
     std::ofstream myfile(filename);
     std::size_t max_size = 0;
-    for (int j = 0; j < names.size(); j++)
-    {
-        max_size = max(max_size, names[j].length());
-    }
     std::size_t field_size = 2+max_size;
-    myfile << "#";
-    for (int j = 0; j < names.size(); j++)
-    {
-        myfile << str_pad(names[j] + "[" + std::to_string(j) + "]" + ((j<names.size()-1)?',':' '), ' ', field_size);
-    }
     myfile << "\n";
     std::size_t minsize = detail::get_min_size_r(vecs...);
     for (std::size_t i = 0; i < minsize; i++)
     {
         detail::write_r(field_size, myfile, i, vecs...);
+    }
+}
+
+static void save_names(const std::string& filename, const std::vector<std::string>& names)
+{
+    std::ofstream myfile(filename);
+    std::size_t ml = 0;
+    for (const auto& n:names)
+    {
+        myfile << str_pad(std::to_string(++ml), 7, ' ') << " -> " << n << "\n";
     }
 }
