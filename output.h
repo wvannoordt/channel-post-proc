@@ -44,7 +44,7 @@ namespace detail
 }
 template <class... indexable_t> static void save_csv(
     const std::string& filename,
-    const std::vector<std::string> names,
+    const std::vector<std::string>& names,
     indexable_t... vecs)
 {
     std::ofstream myfile(filename);
