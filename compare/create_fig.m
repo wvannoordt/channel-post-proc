@@ -1,11 +1,11 @@
-function [dum] = create_fig(oxdata, oxcol, csname, titlename, pngname)
+function [dum] = create_fig(oxdata, oxcol, csname, titlename, pngname, fignum)
     dum = 0.0;
     ox_y = oxdata(:,1);
     ox_f = oxdata(:,oxcol);
-    csdata = load(csname);
+    csdata = csvread(csname);
     cs_y = csdata(:,1)-1.0;
     cs_f = csdata(:,2);
-    figure
+    figure(fignum)
     hold on
     plot(ox_y, ox_f)
     plot(cs_y, cs_f)

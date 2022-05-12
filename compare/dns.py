@@ -77,6 +77,14 @@ def main():
 	w_tld = []
 	T_bar = []
 	T_tld = []
+	
+	u_pp  = []
+	v_pp  = []
+	w_pp  = []
+	
+	uT_pp  = []
+	vT_pp  = []
+	wT_pp  = []
 
 
 	tau_du = dns['M6.0']['Data']['bar_tau_ij_dul_dxm'][1]
@@ -86,6 +94,8 @@ def main():
 	vals2  = dns['M6.0']['Data']['bar_AB'][1]
 	dtau   = dns['M6.0']['Data']['bar_dtau_ij_dxl'][1]
 	yy     = dns['M6.0']['Data']['y'][1]
+	trips  = dns['M6.0']['Data']['bar_ABC'][1]
+	pps    = dns['M6.0']['Data']['bar_rhoAppBpp'][1]
 
 	# print(grads)
 	print(N, round(N/2))
@@ -114,7 +124,13 @@ def main():
 		B00.append((u_tld[i] - u_bar[i])*dtau[i][0][0][0])
 		B01.append((u_tld[i] - u_bar[i])*dtau[i][0][1][1])
 		B02.append((u_tld[i] - u_bar[i])*dtau[i][0][2][2])
-		C10.append(-(u_bar[i] - u_tld[i])*grads[i][4][1])
+		C10.append((u_bar[i] - u_tld[i])*grads[i][4][1])
+		u_pp.append((trips[i][0]/vals[i][0]) - (vals2[i][0]/vals[i][0])*(vals2[i][0]/vals[i][0]))
+		v_pp.append((trips[i][3]/vals[i][0]) - (vals2[i][1]/vals[i][0])*(vals2[i][1]/vals[i][0]))
+		w_pp.append((trips[i][5]/vals[i][0]) - (vals2[i][2]/vals[i][0])*(vals2[i][2]/vals[i][0]))
+		uT_pp.append(pps[i][6]/vals[i][0])
+		vT_pp.append(pps[i][7]/vals[i][0])
+		wT_pp.append(pps[i][8]/vals[i][0])
 
 	write_csv(y, A00,   'purdue/cs-a00.csv')
 	write_csv(y, A01,   'purdue/cs-a01.csv')
@@ -134,6 +150,12 @@ def main():
 	write_csv(y, C10,   'purdue/cs-c10.csv')
 	write_csv(y, T_tld, 'purdue/cs-T.csv')
 	write_csv(y, u_tld, 'purdue/cs-u.csv')
+	write_csv(y, u_pp, 'purdue/cs-upp.csv')
+	write_csv(y, v_pp, 'purdue/cs-vpp.csv')
+	write_csv(y, w_pp, 'purdue/cs-wpp.csv')
+	write_csv(y, uT_pp, 'purdue/cs-uTpp.csv')
+	write_csv(y, vT_pp, 'purdue/cs-vTpp.csv')
+	write_csv(y, wT_pp, 'purdue/cs-wTpp.csv')
 
 def write_csv(y, f, name):
 	print('output {}'.format(name))
