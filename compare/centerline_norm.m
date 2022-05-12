@@ -1,4 +1,4 @@
-function [dum] = create_fig(oxdata, oxcol, csname, titlename, pngname, fignum)
+function [dum] = centerline_norm(oxdata, oxcol, csname, titlename, pngname, fignum)
     dum = 0.0;
     ox_y = oxdata(:,1)+1.0;
     ox_f = oxdata(:,oxcol);
@@ -7,8 +7,8 @@ function [dum] = create_fig(oxdata, oxcol, csname, titlename, pngname, fignum)
     cs_f = csdata(:,2);
     figure(fignum)
     hold on
-    plot(ox_y, ox_f)
-    plot(cs_y, cs_f)
+    plot(ox_y, ox_f/ox_f(end))
+    plot(cs_y, cs_f/cs_f(end))
     h = legend('WMLES', 'DNS');
     title(titlename);
     saveas(gcf, pngname);

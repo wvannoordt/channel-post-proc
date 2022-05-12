@@ -68,6 +68,8 @@ def main():
 	B02 = []
 
 	C10 = []
+	
+	rho = []
 
 	u_bar = []
 	u_tld = []
@@ -85,6 +87,8 @@ def main():
 	uT_pp  = []
 	vT_pp  = []
 	wT_pp  = []
+	
+	mu     = []
 
 
 	tau_du = dns['M6.0']['Data']['bar_tau_ij_dul_dxm'][1]
@@ -131,7 +135,11 @@ def main():
 		uT_pp.append(pps[i][6]/vals[i][0])
 		vT_pp.append(pps[i][7]/vals[i][0])
 		wT_pp.append(pps[i][8]/vals[i][0])
+		rho.append(vals[i][0])
+		mu.append(vals[i][6])
 
+	write_csv(y, rho,   'purdue/cs-rho.csv')
+	write_csv(y, mu,    'purdue/cs-mu.csv')
 	write_csv(y, A00,   'purdue/cs-a00.csv')
 	write_csv(y, A01,   'purdue/cs-a01.csv')
 	write_csv(y, A02,   'purdue/cs-a02.csv')

@@ -18,8 +18,8 @@ a20_ox   = oxdata(:,38);
 a21_ox   = oxdata(:,39);
 a22_ox   = oxdata(:,40);
 
-create_fig(oxdata, 9,  'purdue/cs-u.csv', 'U tilde', 'png/utild.png', 1);
-create_fig(oxdata, 12, 'purdue/cs-T.csv', 'T tilde', 'png/Ttild.png', 2);
+inner_Scale(oxdata, 9,  'purdue/cs-u.csv', 'U tilde', 'png/utild.png', 1);
+centerline_norm(oxdata, 12, 'purdue/cs-T.csv', 'T tilde', 'png/Ttild.png', 2);
 create_fig(oxdata, 41, 'purdue/cs-c10.csv', 'C10', 'png/c10.png', 3);
 create_fig(oxdata, 32, 'purdue/cs-a00.csv', 'A00', 'png/a00.png', 4);
 create_fig(oxdata, 33, 'purdue/cs-a01.csv', 'A01', 'png/a01.png', 4);
