@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	int start = timesteps::startstep;
 	int end   = timesteps::endstep;
 	int skip  = timesteps::skipstep;
-	
+	const double prandtl = 0.72;
 	std::string inFile = "input.ptl";
     cmf::ReadInput(inFile);
     cmf::globalSettings = cmf::GlobalSettings(cmf::mainInput["GlobalSettings"]);
@@ -116,6 +116,8 @@ int main(int argc, char** argv)
 	avg_qty_t<double>     tau_u_20_bar(ny, registry);
 	avg_qty_t<double>     tau_u_21_bar(ny, registry);
 	avg_qty_t<double>     tau_u_22_bar(ny, registry);
+	avg_qty_t<double>     tau_v_11_bar(ny, registry);
+	avg_qty_t<double>     tau_w_12_bar(ny, registry);
 	avg_qty_t<double>         dpdy_bar(ny, registry);
 	avg_qty_t<double>   tau_g_00_0_bar(ny, registry);
 	avg_qty_t<double>   tau_g_01_1_bar(ny, registry);
@@ -132,6 +134,10 @@ int main(int argc, char** argv)
 	avg_qty_t<double>           ux_bar(ny, registry);
 	avg_qty_t<double>           vy_bar(ny, registry);
 	avg_qty_t<double>           wz_bar(ny, registry);
+	avg_qty_t<double>       rho_vk_bar(ny, registry);
+	avg_qty_t<double>       rho_vT_bar(ny, registry);
+	avg_qty_t<double>           qy_bar(ny, registry);
+	
 	
 	
 	auto accumulate = [](std::vector<double>& a, const std::vector<double>& b) -> void
@@ -211,6 +217,31 @@ int main(int argc, char** argv)
 		compute_average(primsInst,     ux_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[0].u();});
 		compute_average(primsInst,     vy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].v();});
 		compute_average(primsInst,     wz_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[2].w();});
+		compute_average(primsInst,     tau_v_11_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+                {
+		  double tau11 = visc.calc_visc(prim)*(prim_grad[1].v()+prim_grad[1].v()) + visc.calc_beta(prim)*(prim_grad[0].u() + prim_grad[1].v() + prim_grad[2].w());
+		  return prim.v()*tau11;
+                });
+		compute_average(primsInst,     tau_w_12_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+                {
+		  double tau12 = visc.calc_visc(prim)*(prim_grad[2].v()+prim_grad[1].w());
+		  return prim.w()*tau12;
+                });
+		compute_average(primsInst,     rho_vk_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+                {
+		  double rho = prim.p()/(air.R*prim.T());
+		  return 0.5*rho*prim.v()*(prim.u()*prim.u()+prim.v()*prim.v()+prim.w()*prim.w());
+                });
+		compute_average(primsInst,     rho_vT_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+                {
+		  double rho = prim.p()/(air.R*prim.T());
+		  return rho*prim.v()*prim.T();
+                });
+		compute_average(primsInst,         qy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+                {
+		  double kappa = visc.calc_visc(prim)/prandtl;
+		  return -kappa*prim_grad[1].T();
+                });
 		
 		compute_viscdif(primsInst, visc,
 			tau_g_00_0_bar.inst_data,
