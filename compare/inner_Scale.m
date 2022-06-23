@@ -21,7 +21,7 @@ function [dum] = inner_Scale(oxdata, oxcol, csname, titlename, pngname, fignum)
     ox_yp = ox_rho.*ox_y.*utau_ox./ox_mu;
     cs_yp = cs_rho.*cs_y.*utau_cs./cs_mu;
     
-    figure(fignum)
+    figure%(fignum)
     semilogx(ox_yp, ox_u)
     hold on
     semilogx(cs_yp, cs_u)

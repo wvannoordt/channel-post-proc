@@ -5,7 +5,7 @@ function [dum] = centerline_norm(oxdata, oxcol, csname, titlename, pngname, fign
     csdata = csvread(csname);
     cs_y = csdata(:,1);
     cs_f = csdata(:,2);
-    figure(fignum)
+    figure%(fignum)
     hold on
     plot(ox_y, ox_f/ox_f(end))
     plot(cs_y, cs_f/cs_f(end))

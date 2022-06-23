@@ -210,38 +210,38 @@ int main(int argc, char** argv)
 		compute_average(primsInst,   gru_20_bar.inst_data, [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[0].w();});
 		compute_average(primsInst,   gru_21_bar.inst_data, [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].w();});
 		compute_average(primsInst,   gru_22_bar.inst_data, [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[2].w();});
-		compute_average(primsInst,   dpdy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].p();});
-		compute_average(primsInst,   p_ux_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim.p()*prim_grad[0].u();});
-		compute_average(primsInst,   p_vy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim.p()*prim_grad[1].v();});
-		compute_average(primsInst,   p_wz_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim.p()*prim_grad[2].w();});
-		compute_average(primsInst,     ux_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[0].u();});
-		compute_average(primsInst,     vy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].v();});
-		compute_average(primsInst,     wz_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[2].w();});
-		compute_average(primsInst,     tau_v_11_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
-                {
-		  double tau11 = visc.calc_visc(prim)*(prim_grad[1].v()+prim_grad[1].v()) + visc.calc_beta(prim)*(prim_grad[0].u() + prim_grad[1].v() + prim_grad[2].w());
-		  return prim.v()*tau11;
-                });
-		compute_average(primsInst,     tau_w_12_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
-                {
-		  double tau12 = visc.calc_visc(prim)*(prim_grad[2].v()+prim_grad[1].w());
-		  return prim.w()*tau12;
-                });
-		compute_average(primsInst,     rho_vk_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
-                {
-		  double rho = prim.p()/(air.R*prim.T());
-		  return 0.5*rho*prim.v()*(prim.u()*prim.u()+prim.v()*prim.v()+prim.w()*prim.w());
-                });
-		compute_average(primsInst,     rho_vT_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
-                {
-		  double rho = prim.p()/(air.R*prim.T());
-		  return rho*prim.v()*prim.T();
-                });
-		compute_average(primsInst,         qy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
-                {
-		  double kappa = visc.calc_visc(prim)/prandtl;
-		  return -kappa*prim_grad[1].T();
-                });
+		compute_average(primsInst,     dpdy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].p();});
+		compute_average(primsInst,     p_ux_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim.p()*prim_grad[0].u();});
+		compute_average(primsInst,     p_vy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim.p()*prim_grad[1].v();});
+		compute_average(primsInst,     p_wz_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim.p()*prim_grad[2].w();});
+		compute_average(primsInst,       ux_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[0].u();});
+		compute_average(primsInst,       vy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[1].v();});
+		compute_average(primsInst,       wz_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double {return prim_grad[2].w();});
+		compute_average(primsInst, tau_v_11_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+		{
+			double tau11 = visc.calc_visc(prim)*(prim_grad[1].v()+prim_grad[1].v()) + visc.calc_beta(prim)*(prim_grad[0].u() + prim_grad[1].v() + prim_grad[2].w());
+			return prim.v()*tau11;
+		});
+		compute_average(primsInst, tau_w_12_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+		{
+			double tau12 = visc.calc_visc(prim)*(prim_grad[2].v()+prim_grad[1].w());
+			return prim.w()*tau12;
+		});
+		compute_average(primsInst,   rho_vk_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+		{
+			double rho = prim.p()/(air.R*prim.T());
+			return 0.5*rho*prim.v()*(prim.u()*prim.u()+prim.v()*prim.v()+prim.w()*prim.w());
+		});
+		compute_average(primsInst,   rho_vT_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+		{
+			double rho = prim.p()/(air.R*prim.T());
+			return rho*prim.v()*prim.T();
+		});
+		compute_average(primsInst,       qy_bar.inst_data,   [=](const prim_t<double>& prim, const val_grad<3, prim_t<double>>& prim_grad) -> double
+		{
+			double kappa = visc.calc_visc(prim)/prandtl;
+			return -kappa*prim_grad[1].T();
+		});
 		
 		compute_viscdif(primsInst, visc,
 			tau_g_00_0_bar.inst_data,
@@ -401,7 +401,9 @@ int main(int argc, char** argv)
 									"C10", "dpdy_bar",
 									"dtau_00_dx", "dtau_01_dy", "dtau_02_dz",
 									"dtau_10_dx", "dtau_11_dy", "dtau_12_dz",
-									"dtau_20_dx", "dtau_21_dy", "dtau_22_dz", "D0", "D1", "D2", "B00", "B01", "B02"};
+									"dtau_20_dx", "dtau_21_dy", "dtau_22_dz", "D0", "D1", "D2", "B00", "B01", "B02",
+									"tau_u_10_bar", "tau_v_11_bar", "tau_w_12_bar",
+									"rho_vk_bar", "rho_vT_bar", "qy_bar"};
 									
 	save_csv("output/data.csv", y_bar, mu_bar, rho_bar, U_bar,
 								V_bar, W_bar, T_bar, P_bar, u_tilde, v_tilde, w_tilde,
@@ -412,7 +414,9 @@ int main(int argc, char** argv)
 								tau_g_00_0_bar, tau_g_01_1_bar, tau_g_02_2_bar, tau_g_10_0_bar,
 								tau_g_11_1_bar, tau_g_12_2_bar, tau_g_20_0_bar, tau_g_21_1_bar,
 								tau_g_22_2_bar,
-								D0, D1, D2, B00, B01, B02);
+								D0, D1, D2, B00, B01, B02,
+								tau_u_10_bar, tau_v_11_bar, tau_w_12_bar,
+								rho_vk_bar, rho_vT_bar, qy_bar);
 	save_names("output/names.dat", names);
 		
     return 0;

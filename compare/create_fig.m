@@ -5,7 +5,7 @@ function [dum] = create_fig(oxdata, oxcol, csname, titlename, pngname, fignum)
     csdata = csvread(csname);
     cs_y = csdata(:,1);
     cs_f = csdata(:,2);
-    figure(fignum)
+    figure%(fignum)
     hold on
     plot(ox_y, ox_f)
     plot(cs_y, cs_f)
