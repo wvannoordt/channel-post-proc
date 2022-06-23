@@ -89,6 +89,13 @@ def main():
 	wT_pp  = []
 	
 	mu     = []
+	
+	rhovT  = []
+	rhovk  = []
+	qy     = []
+	utau10 = []
+	vtau11 = []
+	wtau12 = []
 
 
 	tau_du = dns['M6.0']['Data']['bar_tau_ij_dul_dxm'][1]
@@ -137,6 +144,14 @@ def main():
 		wT_pp.append(pps[i][8]/vals[i][0])
 		rho.append(vals[i][0])
 		mu.append(vals[i][6])
+		
+		prandtl = 0.72
+		rhovT.append(vals[i][0]*vals[i][2]*vals[i][5])
+		rhovk.append(0.5*vals[i][0]*vals[i][2]*(vals[i][1]*vals[i][1]+vals[i][2]*vals[i][2]+vals[i][3]*vals[i][3]))
+		qy.append(-1.0*grads[i][5][1]*vals[i][6]/prandtl)
+		utau10.append(vals[i][1]*tau[i][1][0])
+		vtau11.append(vals[i][2]*tau[i][1][1])
+		wtau12.append(vals[i][3]*tau[i][1][2])
 
 	write_csv(y, rho,   'purdue/cs-rho.csv')
 	write_csv(y, mu,    'purdue/cs-mu.csv')
@@ -164,6 +179,13 @@ def main():
 	write_csv(y, uT_pp, 'purdue/cs-uTpp.csv')
 	write_csv(y, vT_pp, 'purdue/cs-vTpp.csv')
 	write_csv(y, wT_pp, 'purdue/cs-wTpp.csv')
+	
+	write_csv(y, rhovT, 'purdue/bal-cs-rhovT.csv')
+	write_csv(y, rhovk, 'purdue/bal-cs-rhovk.csv')
+	write_csv(y, qy,    'purdue/bal-cs-qy.csv')
+	write_csv(y, utau10,'purdue/bal-cs-utau10.csv')
+	write_csv(y, vtau11,'purdue/bal-cs-vtau11.csv')
+	write_csv(y, wtau12,'purdue/bal-cs-wtau12.csv')
 
 def write_csv(y, f, name):
 	print('output {}'.format(name))
