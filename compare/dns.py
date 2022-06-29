@@ -186,6 +186,9 @@ def main():
 	write_csv(y, utau10,'purdue/bal-cs-utau10.csv')
 	write_csv(y, vtau11,'purdue/bal-cs-vtau11.csv')
 	write_csv(y, wtau12,'purdue/bal-cs-wtau12.csv')
+	
+	write_csv(y, rho,  'purdue/bal-cs-rho.csv')
+	write_csv(y, u_tld,'purdue/bal-cs-utild.csv')
 
 def write_csv(y, f, name):
 	print('output {}'.format(name))
