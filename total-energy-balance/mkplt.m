@@ -16,6 +16,7 @@ qy    = data(1:n, 63);
 utau0 = data(1:n, 58);
 vtau1 = data(1:n, 59);
 wtau2 = data(1:n, 60);
+rhovk = data(1:n, 61);
 
 ycs = csvread('bal-cs-qy.csv');
 ycs = ycs(:,1);
@@ -34,6 +35,9 @@ wtau2cs = wtau2cs(:,2);
 
 rhovTcs = csvread('bal-cs-rhovT.csv');
 rhovTcs = rhovTcs(:,2);
+
+rhovkcs = csvread('bal-cs-rhovk.csv');
+rhovkcs = rhovkcs(:,2);
 
 rhovTcs = csvread('bal-cs-rhovT.csv');
 rhovTcs = heatfac*rhovTcs(:,2);
@@ -85,3 +89,10 @@ plot(y, rho.*utild, 'linewidth', 3)
 plot(ycs, rhocs.*utildcs, 'linewidth', 3)
 h = legend('WMLES', 'DNS');
 title('\rho u')
+
+figure
+hold on
+plot(y, rhovk, 'linewidth', 3)
+plot(ycs, rhovkcs, 'linewidth', 3)
+h = legend('WMLES', 'DNS');
+title('\rho v k')
