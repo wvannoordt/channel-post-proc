@@ -149,7 +149,7 @@ def main():
 		
 		prandtl = 0.72
 		rhovT.append(vals[i][0]*vals[i][2]*vals[i][5])
-		rhovk.append(rhoABC[i][1])
+		rhovk.append(0.5*rhoABC[i][1])
 		qy.append(-1.0*grads[i][5][1]*vals[i][6]/prandtl)
 		utau10.append(vals[i][1]*tau[i][1][0])
 		vtau11.append(vals[i][2]*tau[i][1][1])
