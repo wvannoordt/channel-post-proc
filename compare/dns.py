@@ -112,7 +112,8 @@ def main():
 
 	# print(grads)
 	print(N, round(N/2))
-	for i in range(round(N/2)):
+	# for i in range(round(N/2)):
+	for i in range(round(N)):
 		y.append(yy[i])
 		u_bar.append(vals[i][1])
 		v_bar.append(vals[i][2])
@@ -149,7 +150,7 @@ def main():
 		
 		prandtl = 0.72
 		rhovT.append(vals[i][0]*vals[i][2]*vals[i][5])
-		rhovk.append(rhoABC[i][1])
+		rhovk.append(0.5*rhoABC[i][1])
 		qy.append(-1.0*grads[i][5][1]*vals[i][6]/prandtl)
 		utau10.append(vals[i][1]*tau[i][1][0])
 		vtau11.append(vals[i][2]*tau[i][1][1])
@@ -188,9 +189,9 @@ def main():
 	write_csv(y, utau10,'purdue/bal-cs-utau10.csv')
 	write_csv(y, vtau11,'purdue/bal-cs-vtau11.csv')
 	write_csv(y, wtau12,'purdue/bal-cs-wtau12.csv')
-	
-	write_csv(y, rho,  'purdue/bal-cs-rho.csv')
-	write_csv(y, u_tld,'purdue/bal-cs-utild.csv')
+	write_csv(y, vT_pp, 'purdue/bal-cs-vTpp.csv')
+	write_csv(y, rho,   'purdue/bal-cs-rho.csv')
+	write_csv(y, u_tld, 'purdue/bal-cs-utild.csv')
 
 def write_csv(y, f, name):
 	print('output {}'.format(name))
