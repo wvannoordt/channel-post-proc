@@ -112,7 +112,8 @@ def main():
 
 	# print(grads)
 	print(N, round(N/2))
-	for i in range(round(N/2)):
+	# for i in range(round(N/2)):
+	for i in range(round(N)):
 		y.append(yy[i])
 		u_bar.append(vals[i][1])
 		v_bar.append(vals[i][2])
@@ -188,9 +189,9 @@ def main():
 	write_csv(y, utau10,'purdue/bal-cs-utau10.csv')
 	write_csv(y, vtau11,'purdue/bal-cs-vtau11.csv')
 	write_csv(y, wtau12,'purdue/bal-cs-wtau12.csv')
-	
-	write_csv(y, rho,  'purdue/bal-cs-rho.csv')
-	write_csv(y, u_tld,'purdue/bal-cs-utild.csv')
+	write_csv(y, vT_pp, 'purdue/bal-cs-vTpp.csv')
+	write_csv(y, rho,   'purdue/bal-cs-rho.csv')
+	write_csv(y, u_tld, 'purdue/bal-cs-utild.csv')
 
 def write_csv(y, f, name):
 	print('output {}'.format(name))
