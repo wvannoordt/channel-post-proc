@@ -2,6 +2,16 @@ clear
 clc
 close all
 
+set(groot, 'defaultTextInterpreter','latex');
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+
+axis_fs  = 28;
+label_fs = 28;
+
+plot_lw  = 3;
+axis_lw  = 2;
+
 R = 287.15;
 gamma = 1.4;
 heatfac = gamma*R/(gamma-1);
@@ -37,7 +47,7 @@ rhovTcs = csvread('bal-cs-rhovT.csv');
 rhovTcs = rhovTcs(:,2);
 
 rhovkcs = csvread('bal-cs-rhovk.csv');
-rhovkcs = rhovkcs(:,2);
+rhovkcs = 0.5*rhovkcs(:,2);
 
 rhovTcs = csvread('bal-cs-rhovT.csv');
 rhovTcs = heatfac*rhovTcs(:,2);
@@ -47,52 +57,98 @@ rhocs   = rhocs(:,2);
 
 utildcs = csvread('bal-cs-utild.csv');
 utildcs = utildcs(:,2);
-figure
-%plot(y, rhovk);
+figure('Position', [500 500 1500 600])
 hold on
 plot(y,     qy, 'linewidth', 3);
 plot(ycs, qycs, 'linewidth', 3);
 h = legend('WMLES', 'DNS');
-title('q_y')
+set(h, 'location', 'southeast')
+set(h, 'fontsize', label_fs)
+xlabel('$y/\delta$')
+set(gca, 'linewidth', axis_lw)
+set(gca, 'fontsize', axis_fs)
+title('$q_y$', 'fontsize', label_fs)
+saveas(gcf, 'qy.png')
 
-figure
+figure('Position', [500 500 1500 600])
 hold on
 plot(y, utau0, 'linewidth', 3)
 plot(ycs, utau0cs, 'linewidth', 3)
 h = legend('WMLES', 'DNS');
-title('u tauyx')
+set(h, 'location', 'southeast')
+set(h, 'fontsize', label_fs)
+xlabel('$y/\delta$')
+set(gca, 'linewidth', axis_lw)
+set(gca, 'fontsize', axis_fs)
+title('$u \tau_{yx}$', 'fontsize', label_fs)
+saveas(gcf, 'utauyx.png')
 
-figure
-hold on
-plot(y, vtau1, 'linewidth', 3)
-plot(ycs, vtau1cs, 'linewidth', 3)
-h = legend('WMLES', 'DNS');
-title('v tauyy')
+% figure('Position', [500 500 1500 600])
+% hold on
+% plot(y, vtau1, 'linewidth', 3)
+% plot(ycs, vtau1cs, 'linewidth', 3)
+% h = legend('WMLES', 'DNS');
+% set(h, 'location', 'southeast')
+% set(h, 'fontsize', label_fs)
+% title('$v \tau_{yy}$', 'fontsize', label_fs)
 
-figure
-hold on
-plot(y, wtau2, 'linewidth', 3)
-plot(ycs, wtau2cs, 'linewidth', 3)
-h = legend('WMLES', 'DNS');
-title('w tauyz')
+% figure('Position', [500 500 1500 600])
+% hold on
+% plot(y, wtau2, 'linewidth', 3)
+% plot(ycs, wtau2cs, 'linewidth', 3)
+% h = legend('WMLES', 'DNS');
+% set(h, 'location', 'southeast')
+% set(h, 'fontsize', label_fs)
+% title('$w \tau_{yz}$', 'fontsize', label_fs)
 
-figure
+figure('Position', [500 500 1500 600])
 hold on
 plot(y, rhovT, 'linewidth', 3)
 plot(ycs, rhovTcs, 'linewidth', 3)
 h = legend('WMLES', 'DNS');
-title('\rho vT')
+set(h, 'location', 'southeast')
+set(h, 'fontsize', label_fs)
+xlabel('$y/\delta$')
+set(gca, 'linewidth', axis_lw)
+set(gca, 'fontsize', axis_fs)
+title('$\gamma R \overline{\rho vT}/ (\gamma - 1)$', 'fontsize', label_fs)
+saveas(gcf, 'rhovT.png')
 
-figure
+figure('Position', [500 500 1500 600])
 hold on
 plot(y, rho.*utild, 'linewidth', 3)
 plot(ycs, rhocs.*utildcs, 'linewidth', 3)
 h = legend('WMLES', 'DNS');
-title('\rho u')
+set(h, 'location', 'southeast')
+set(h, 'fontsize', label_fs)
+xlabel('$y/\delta$')
+set(gca, 'linewidth', axis_lw)
+set(gca, 'fontsize', axis_fs)
+title('$\overline{\rho u}$', 'fontsize', label_fs)
+saveas(gcf, 'rhou.png')
 
-figure
+figure('Position', [500 500 1500 600])
 hold on
 plot(y, rhovk, 'linewidth', 3)
 plot(ycs, rhovkcs, 'linewidth', 3)
 h = legend('WMLES', 'DNS');
-title('\rho v k')
+set(h, 'location', 'southeast')
+set(h, 'fontsize', label_fs)
+xlabel('$y/\delta$')
+set(gca, 'linewidth', axis_lw)
+set(gca, 'fontsize', axis_fs)
+title('$\overline{\rho v k}$', 'fontsize', label_fs)
+saveas(gcf, 'rhovk.png')
+
+figure('Position', [500 500 1500 600])
+hold on
+plot(y, rho, 'linewidth', 3)
+plot(ycs, rhocs, 'linewidth', 3)
+h = legend('WMLES', 'DNS');
+set(h, 'location', 'southeast')
+set(h, 'fontsize', label_fs)
+xlabel('$y/\delta$')
+set(gca, 'linewidth', axis_lw)
+set(gca, 'fontsize', axis_fs)
+title('$\rho$', 'fontsize', label_fs)
+saveas(gcf, 'rho.png')
