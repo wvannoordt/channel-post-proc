@@ -11,3 +11,11 @@ GlobalSettings
 		allowStackAllocation = false
 	}
 }
+Data
+{
+	startstep = 1494500
+	endstep   = 1494500
+	skipstep  = $(skip)
+	filename  = data-hello.csv
+	inputdir  = data
+}

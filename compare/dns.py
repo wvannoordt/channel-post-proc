@@ -21,7 +21,7 @@ def main():
 	print(dns['M6.0']['Data']['bar_A'][0])
 	print(dns['M6.0']['Data']['bar_AB'][0])
 	print(dns['M6.0']['Data']['bar_ABC'][0])
-	print(dns['M6.0']['Data']['bar_rho_ABC'])
+	print(dns['M6.0']['Data']['bar_rho_ABC'][0])
 	print(dns['M6.0']['Data']['bar_AB_gradC'][0])
 	print(dns['M6.0']['Data']['bar_A_gradB'][0])
 	print(dns['M6.0']['Data']['bar_rhoAppBpp'][0])
@@ -48,57 +48,49 @@ def main():
 	#  | redundant
 	N = dns['M6.0']['Data']['bar_ui_dtau_jl_dxm'][1].shape[0]
 
-	y   = []
-
-	A00 = []
-	A01 = []
-	A02 = []
-	A10 = []
-	A11 = []
-	A12 = []
-	A20 = []
-	A21 = []
-	A22 = []
-
-	D0  = []
-	D1  = []
-	D2  = []
-
-	B00 = []
-	B01 = []
-	B02 = []
-
-	C10 = []
+	y       = []
+	A00     = []
+	A01     = []
+	A02     = []
+	A10     = []
+	A11     = []
+	A12     = []
+	A20     = []
+	A21     = []
+	A22     = []
+	D0      = []
+	D1      = []
+	D2      = []
+	B00     = []
+	B01     = []
+	B02     = []
+	C10     = []
+	rho     = []
+	u_bar   = []
+	u_tld   = []
+	v_bar   = []
+	v_tld   = []
+	w_bar   = []
+	w_tld   = []
+	T_bar   = []
+	T_tld   = []
+	u_pp    = []
+	v_pp    = []
+	w_pp    = []
+	uT_pp   = []
+	vT_pp   = []
+	wT_pp   = []
+	mu      = []
+	rhovT   = []
+	rhovk   = []
+	qy      = []
+	utau10  = []
+	vtau11  = []
+	wtau12  = []
+	alpha_t = []
+	mu_t    = []
+	p       = []
 	
-	rho = []
-
-	u_bar = []
-	u_tld = []
-	v_bar = []
-	v_tld = []
-	w_bar = []
-	w_tld = []
-	T_bar = []
-	T_tld = []
-	
-	u_pp  = []
-	v_pp  = []
-	w_pp  = []
-	
-	uT_pp  = []
-	vT_pp  = []
-	wT_pp  = []
-	
-	mu     = []
-	
-	rhovT  = []
-	rhovk  = []
-	qy     = []
-	utau10 = []
-	vtau11 = []
-	wtau12 = []
-
-
 	tau_du = dns['M6.0']['Data']['bar_tau_ij_dul_dxm'][1]
 	tau    = dns['M6.0']['Data']['bar_tau_ij'][1]
 	grads  = dns['M6.0']['Data']['bar_gradA'][1]
@@ -155,43 +147,55 @@ def main():
 		utau10.append(vals[i][1]*tau[i][1][0])
 		vtau11.append(vals[i][2]*tau[i][1][1])
 		wtau12.append(vals[i][3]*tau[i][1][2])
+		
+		dTdy_loc = grads[i][5][1]
+		rho_bar_loc = vals[i][0]
+		vpp_Tpp_loc = pps[i][7]/vals[i][0]
+		upp_vpp_loc = pps[i][1]/vals[i][0]
+		dudy_loc    = grads[i][1][1]
+		alpha_t.append(-rho_bar_loc*vpp_Tpp_loc/dTdy_loc)
+		mu_t.append(-rho_bar_loc*upp_vpp_loc/dudy_loc)
+		p.append(vals[i][4])
 
-	write_csv(y, rho,   'purdue/cs-rho.csv')
-	write_csv(y, mu,    'purdue/cs-mu.csv')
-	write_csv(y, A00,   'purdue/cs-a00.csv')
-	write_csv(y, A01,   'purdue/cs-a01.csv')
-	write_csv(y, A02,   'purdue/cs-a02.csv')
-	write_csv(y, A10,   'purdue/cs-a10.csv')
-	write_csv(y, A11,   'purdue/cs-a11.csv')
-	write_csv(y, A12,   'purdue/cs-a12.csv')
-	write_csv(y, A20,   'purdue/cs-a20.csv')
-	write_csv(y, A21,   'purdue/cs-a21.csv')
-	write_csv(y, A22,   'purdue/cs-a22.csv')
-	write_csv(y, D0,    'purdue/cs-d0.csv')
-	write_csv(y, D1,    'purdue/cs-d1.csv')
-	write_csv(y, D2,    'purdue/cs-d2.csv')
-	write_csv(y, B00,   'purdue/cs-b00.csv')
-	write_csv(y, B01,   'purdue/cs-b01.csv')
-	write_csv(y, B02,   'purdue/cs-b02.csv')
-	write_csv(y, C10,   'purdue/cs-c10.csv')
-	write_csv(y, T_tld, 'purdue/cs-T.csv')
-	write_csv(y, u_tld, 'purdue/cs-u.csv')
-	write_csv(y, u_pp,  'purdue/cs-upp.csv')
-	write_csv(y, v_pp,  'purdue/cs-vpp.csv')
-	write_csv(y, w_pp,  'purdue/cs-wpp.csv')
-	write_csv(y, uT_pp, 'purdue/cs-uTpp.csv')
-	write_csv(y, vT_pp, 'purdue/cs-vTpp.csv')
-	write_csv(y, wT_pp, 'purdue/cs-wTpp.csv')
+	write_csv(y, rho,      'purdue/cs-rho.csv')
+	write_csv(y, mu,       'purdue/cs-mu.csv')
+	write_csv(y, A00,      'purdue/cs-a00.csv')
+	write_csv(y, A01,      'purdue/cs-a01.csv')
+	write_csv(y, A02,      'purdue/cs-a02.csv')
+	write_csv(y, A10,      'purdue/cs-a10.csv')
+	write_csv(y, A11,      'purdue/cs-a11.csv')
+	write_csv(y, A12,      'purdue/cs-a12.csv')
+	write_csv(y, A20,      'purdue/cs-a20.csv')
+	write_csv(y, A21,      'purdue/cs-a21.csv')
+	write_csv(y, A22,      'purdue/cs-a22.csv')
+	write_csv(y, D0,       'purdue/cs-d0.csv')
+	write_csv(y, D1,       'purdue/cs-d1.csv')
+	write_csv(y, D2,       'purdue/cs-d2.csv')
+	write_csv(y, B00,      'purdue/cs-b00.csv')
+	write_csv(y, B01,      'purdue/cs-b01.csv')
+	write_csv(y, B02,      'purdue/cs-b02.csv')
+	write_csv(y, C10,      'purdue/cs-c10.csv')
+	write_csv(y, T_tld,    'purdue/cs-T.csv')
+	write_csv(y, u_tld,    'purdue/cs-u.csv')
+	write_csv(y, u_pp,     'purdue/cs-upp.csv')
+	write_csv(y, v_pp,     'purdue/cs-vpp.csv')
+	write_csv(y, w_pp,     'purdue/cs-wpp.csv')
+	write_csv(y, uT_pp,    'purdue/cs-uTpp.csv')
+	write_csv(y, vT_pp,    'purdue/cs-vTpp.csv')
+	write_csv(y, wT_pp,    'purdue/cs-wTpp.csv')
 	
-	write_csv(y, rhovT, 'purdue/bal-cs-rhovT.csv')
-	write_csv(y, rhovk, 'purdue/bal-cs-rhovk.csv')
-	write_csv(y, qy,    'purdue/bal-cs-qy.csv')
-	write_csv(y, utau10,'purdue/bal-cs-utau10.csv')
-	write_csv(y, vtau11,'purdue/bal-cs-vtau11.csv')
-	write_csv(y, wtau12,'purdue/bal-cs-wtau12.csv')
-	write_csv(y, vT_pp, 'purdue/bal-cs-vTpp.csv')
-	write_csv(y, rho,   'purdue/bal-cs-rho.csv')
-	write_csv(y, u_tld, 'purdue/bal-cs-utild.csv')
+	write_csv(y, rhovT,    'purdue/bal-cs-rhovT.csv')
+	write_csv(y, rhovk,    'purdue/bal-cs-rhovk.csv')
+	write_csv(y, qy,       'purdue/bal-cs-qy.csv')
+	write_csv(y, utau10,   'purdue/bal-cs-utau10.csv')
+	write_csv(y, vtau11,   'purdue/bal-cs-vtau11.csv')
+	write_csv(y, wtau12,   'purdue/bal-cs-wtau12.csv')
+	write_csv(y, vT_pp,    'purdue/bal-cs-vTpp.csv')
+	write_csv(y, rho,      'purdue/bal-cs-rho.csv')
+	write_csv(y, u_tld,    'purdue/bal-cs-utild.csv')
+	write_csv(y, alpha_t,  'purdue/cs-alpha_t.csv')
+	write_csv(y, mu_t,     'purdue/cs-mu_t.csv')
+	write_csv(y, p,        'purdue/cs-p.csv')
 
 def write_csv(y, f, name):
 	print('output {}'.format(name))
