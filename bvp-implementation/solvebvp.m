@@ -5,6 +5,8 @@ close all
 ycs = csvread('data/bal-cs-qy.csv');
 ycs = ycs(:,1);
 
+Ncs = length(ycs);
+
 qycs = csvread('data/bal-cs-qy.csv');
 qycs = qycs(:,2);
 
@@ -29,6 +31,19 @@ rhocs   = rhocs(:,2);
 utildcs = csvread('data/bal-cs-utild.csv');
 utildcs = utildcs(:,2);
 
+mucs   = 
+
+Tbarcs = 
+
 R = 287.15;
 gamma = 1.4;
 forc = 20.75/0.498742216e-02;
+
+rhs = 0*ycs;
+rhs = rhs + diff_prof(rhocs.*rhovkcs, ycs);
+rhs = rhs + (gamma*R/(gamma-1))*diff_prof(rhocs.*vppTppcs, ycs);
+rhs = rhs + diff_prof(utau0cs, ycs);
+rhs = rhs + diff_prof(vtau1cs, ycs);
+rhs = rhs + diff_prof(wtau2cs, ycs);
+figure
+plot(ycs, rhs);
