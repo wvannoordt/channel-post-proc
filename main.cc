@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 	auto& sec = cmf::mainInput["Data"];
 	sec["startstep"].MapTo(&startstep)       = new PTL::PTLInteger(0, "Starting timestep");
 	sec["endstep"].MapTo(&endstep)           = new PTL::PTLInteger(1, "Ending timestep");
-	sec["skipstep"].MapTo(&startstep)        = new PTL::PTLInteger(1, "Increment timestep");
+	sec["skipstep"].MapTo(&skipstep)         = new PTL::PTLInteger(1, "Increment timestep");
 	sec["filename"].MapTo(&output_filename)  = new PTL::PTLString("data.csv", "Output name");
 	sec["inputdir"].MapTo(&input_dir)        = new PTL::PTLString("data", "Output name");
 	sec.StrictParse();
