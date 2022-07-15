@@ -393,7 +393,7 @@ int main(int argc, char** argv)
 	
 	for (auto i: range(0,nfiles))
 	{
-		std::string filename = strformat("data/restart_unk_nt_{}.dat", ZFill(start+skip*i[0], 8));
+		std::string filename = strformat(input_dir+"/restart_unk_nt_{}.dat", ZFill(start+skip*i[0], 8));
 		print("Reading", filename);
 		reader.LoadData(primsInst, filename);
 		transform_inplace(primsInst, cons2prim);
