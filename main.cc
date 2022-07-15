@@ -39,8 +39,8 @@ int main(int argc, char** argv)
 	int end   =  endstep;
 	int skip  =  skipstep;
 	
-	std::string gid_file = cmf::strformat("data/gridInterpolationInfo_{}.bin", cmf::ZFill(start,8));
-	std::string rba_file = cmf::strformat("data/restart_block_arrangement_nt_{}.dat", cmf::ZFill(start,8));
+	std::string gid_file = cmf::strformat(input_dir+"/gridInterpolationInfo_{}.bin", cmf::ZFill(start,8));
+	std::string rba_file = cmf::strformat(input_dir+"/restart_block_arrangement_nt_{}.dat", cmf::ZFill(start,8));
 	
 	cmf::LegacyRestartReader reader(gid_file, rba_file);
 	cmf::CartesianMeshInputInfo inputInfo = reader.ReadMeshInfo();

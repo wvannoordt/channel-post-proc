@@ -13,9 +13,9 @@ GlobalSettings
 }
 Data
 {
-	startstep = 1494500
-	endstep   = 1494500
-	skipstep  = $(skip)
-	filename  = data-hello.csv
-	inputdir  = data
+	startstep = $(srt)
+	endstep   = $(end)
+	skipstep  = 3500
+	filename  = $(out)
+	inputdir  = $(inp)
 }
