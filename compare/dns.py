@@ -54,38 +54,48 @@ def main():
 	#  | redundant
 	N = dns['M6.0']['Data']['bar_ui_dtau_jl_dxm'][1].shape[0]
 
-	y   = []
-
-	A00 = []
-	A01 = []
-	A02 = []
-	A10 = []
-	A11 = []
-	A12 = []
-	A20 = []
-	A21 = []
-	A22 = []
-
-	D0  = []
-	D1  = []
-	D2  = []
-
-	B00 = []
-	B01 = []
-	B02 = []
-
-	C10 = []
-	
-	rho = []
-
-	u_bar = []
-	u_tld = []
-	v_bar = []
-	v_tld = []
-	w_bar = []
-	w_tld = []
-	T_bar = []
-	T_tld = []
+	y       = []
+	A00     = []
+	A01     = []
+	A02     = []
+	A10     = []
+	A11     = []
+	A12     = []
+	A20     = []
+	A21     = []
+	A22     = []
+	D0      = []
+	D1      = []
+	D2      = []
+	B00     = []
+	B01     = []
+	B02     = []
+	C10     = []
+	rho     = []
+	u_bar   = []
+	u_tld   = []
+	v_bar   = []
+	v_tld   = []
+	w_bar   = []
+	w_tld   = []
+	T_bar   = []
+	T_tld   = []
+	u_pp    = []
+	v_pp    = []
+	w_pp    = []
+	uT_pp   = []
+	vT_pp   = []
+	wT_pp   = []
+	mu      = []
+	rhovT   = []
+	rhovk   = []
+	qy      = []
+	utau10  = []
+	vtau11  = []
+	wtau12  = []
+	alpha_t = []
+	mu_t    = []
+	p       = []
 	
 	u_pp  = []
 	v_pp  = []
@@ -167,6 +177,15 @@ def main():
 		utau10.append(vals[i][1]*tau[i][1][0])
 		vtau11.append(vals[i][2]*tau[i][1][1])
 		wtau12.append(vals[i][3]*tau[i][1][2])
+		
+		dTdy_loc = grads[i][5][1]
+		rho_bar_loc = vals[i][0]
+		vpp_Tpp_loc = pps[i][7]/vals[i][0]
+		upp_vpp_loc = pps[i][1]/vals[i][0]
+		dudy_loc    = grads[i][1][1]
+		alpha_t.append(-rho_bar_loc*vpp_Tpp_loc/dTdy_loc)
+		mu_t.append(-rho_bar_loc*upp_vpp_loc/dudy_loc)
+		p.append(vals[i][4])
 
 	write_csv(y, rho,     'purdue/cs-rho.csv')
 	write_csv(y, mu,      'purdue/cs-mu.csv')

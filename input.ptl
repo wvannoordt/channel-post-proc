@@ -11,3 +11,11 @@ GlobalSettings
 		allowStackAllocation = false
 	}
 }
+Data
+{
+	startstep = $(srt)
+	endstep   = $(end)
+	skipstep  = 3500
+	filename  = $(out)
+	inputdir  = $(inp)
+}
