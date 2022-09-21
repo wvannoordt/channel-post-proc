@@ -21,11 +21,14 @@ function [dum] = inner_Scale(oxdata, oxcol, csname, titlename, pngname, fignum)
     ox_yp = ox_rho.*ox_y.*utau_ox./ox_mu;
     cs_yp = cs_rho.*cs_y.*utau_cs./cs_mu;
     
-    figure%(fignum)
-    semilogx(ox_yp, ox_u)
+    figure('position', [250 250 1200 800])
+    semilogx(ox_yp, ox_u, 'linewidth', 3)
     hold on
-    semilogx(cs_yp, cs_u)
-    h = legend('WMLES', 'DNS');
+    semilogx(cs_yp, cs_u, 'linewidth', 3)
+    if (oxcol==9)
+      axis([10^0 10^2.5 0 1500])
+    end
+    %h = legend('WMLES', 'DNS');
     title(titlename);
     saveas(gcf, pngname);
 end

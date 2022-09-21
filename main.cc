@@ -6,7 +6,7 @@
 #include "compute_viscdif.h"
 #include "output.h"
 #include "tild_fluc.h"
-#include "timesteps.h"
+// #include "timesteps.h"
 #include "visc_law.h"
 #include "avg_qty_t.h"
 
@@ -16,17 +16,32 @@ using cmf::ZFill;
 
 int main(int argc, char** argv)
 {
-	int start = timesteps::startstep;
-	int end   = timesteps::endstep;
-	int skip  = timesteps::skipstep;
+	
 	const double prandtl = 0.72;
 	std::string inFile = "input.ptl";
+	PTL::Interactive itac(argc, argv, &cmf::mainInput);
     cmf::ReadInput(inFile);
     cmf::globalSettings = cmf::GlobalSettings(cmf::mainInput["GlobalSettings"]);
 	cmf::CreateParallelContext(&argc, &argv);
 	
-	std::string gid_file = cmf::strformat("data/gridInterpolationInfo_{}.bin", cmf::ZFill(start,8));
-	std::string rba_file = cmf::strformat("data/restart_block_arrangement_nt_{}.dat", cmf::ZFill(start,8));
+	int startstep = 0;
+    int endstep   = 1;
+    int skipstep  = 1;
+	std::string output_filename, input_dir;
+	auto& sec = cmf::mainInput["Data"];
+	sec["startstep"].MapTo(&startstep)       = new PTL::PTLInteger(0, "Starting timestep");
+	sec["endstep"].MapTo(&endstep)           = new PTL::PTLInteger(1, "Ending timestep");
+	sec["skipstep"].MapTo(&skipstep)         = new PTL::PTLInteger(1, "Increment timestep");
+	sec["filename"].MapTo(&output_filename)  = new PTL::PTLString("data.csv", "Output name");
+	sec["inputdir"].MapTo(&input_dir)        = new PTL::PTLString("data", "Output name");
+	sec.StrictParse();
+	
+	int start =  startstep;
+	int end   =  endstep;
+	int skip  =  skipstep;
+	
+	std::string gid_file = cmf::strformat(input_dir+"/gridInterpolationInfo_{}.bin", cmf::ZFill(start,8));
+	std::string rba_file = cmf::strformat(input_dir+"/restart_block_arrangement_nt_{}.dat", cmf::ZFill(start,8));
 	
 	cmf::LegacyRestartReader reader(gid_file, rba_file);
 	cmf::CartesianMeshInputInfo inputInfo = reader.ReadMeshInfo();
@@ -34,6 +49,9 @@ int main(int argc, char** argv)
 	reader.ConformMesh(domain);
 	// auto& primsAvg  = domain.DefineVariable("primsAvg",  cmf::CmfArrayType::CmfDouble, {5});
 	auto& primsInst = domain.DefineVariable("primsInst", cmf::CmfArrayType::CmfDouble, {5});
+	
+	
+	
 	
 	// transform_inplace(primsAvg, []() -> prim_t<double> {return prim_t<double>(0.0);});
 	
@@ -149,7 +167,7 @@ int main(int argc, char** argv)
 	
 	for (auto i: range(0,nfiles))
 	{
-		std::string filename = strformat("data/restart_unk_nt_{}.dat", ZFill(start+skip*i[0], 8));
+		std::string filename = strformat(input_dir+"/restart_unk_nt_{}.dat", ZFill(start+skip*i[0], 8));
 		print("Reading", filename);
 		{scoped_tmr_t tt("read");
 		reader.LoadData(primsInst, filename);
@@ -384,7 +402,7 @@ int main(int argc, char** argv)
 	
 	for (auto i: range(0,nfiles))
 	{
-		std::string filename = strformat("data/restart_unk_nt_{}.dat", ZFill(start+skip*i[0], 8));
+		std::string filename = strformat(input_dir+"/restart_unk_nt_{}.dat", ZFill(start+skip*i[0], 8));
 		print("Reading", filename);
 		reader.LoadData(primsInst, filename);
 		transform_inplace(primsInst, cons2prim);
@@ -422,8 +440,8 @@ int main(int argc, char** argv)
 									"dtau_20_dx", "dtau_21_dy", "dtau_22_dz", "D0", "D1", "D2", "B00", "B01", "B02",
 									"tau_u_10_bar", "tau_v_11_bar", "tau_w_12_bar",
 									"rho_vk_bar", "rho_vT_bar", "qy_bar"};
-									
-	save_csv("output/data.csv", y_bar, mu_bar, rho_bar, U_bar,
+			
+	save_csv("output/"+output_filename, y_bar, mu_bar, rho_bar, U_bar,
 								V_bar, W_bar, T_bar, P_bar, u_tilde, v_tilde, w_tilde,
 								T_tilde, up_up, vp_vp, wp_wp, Tp_Tp, upp_upp, vpp_vpp,
 								wpp_wpp, Tpp_Tpp, P_bar, u_tilde, v_tilde, w_tilde, T_tilde,
