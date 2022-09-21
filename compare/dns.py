@@ -12,10 +12,12 @@ def main():
 	f.close()
 	mcase = 'M1.5'
 	mcase = 'M3.5'
-	mcase = mcase
+	# mcase = 'M6.0'
 	# print(CHANNEL_DATA.keys())
 	# sys.exit(1)    
 	dns = CHANNEL_DATA
+	print(dns[mcase]['Info'])
+	sys.exit(1)
 	print(dns[mcase]['Data'].keys())
 	print(dns[mcase]['Data']['bar_A'][0])
 	print(dns[mcase]['Data']['bar_AB'][0])
