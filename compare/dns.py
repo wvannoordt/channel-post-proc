@@ -10,49 +10,42 @@ def main():
 	f = open(Main_File_Name, 'rb')
 	CHANNEL_DATA = pickle.load(f,encoding='latin1')
 	f.close()
-	# print(CHANNEL_DATA['M1.5'])
-	print(CHANNEL_DATA['M3.5'])
-	# print(CHANNEL_DATA['M6.0'])
-	print(CHANNEL_DATA.keys())
-	sys.exit(1)
-		
-	# with (open(filename, 'rb')) as openfile:
-	# 	while True:
-	# 		try:
-	# 			objects.append(pickle.load(openfile,encoding='latin1'))
-	# 		except EOFError:
-	# 			break
+	mcase = 'M1.5'
+	mcase = 'M3.5'
+	mcase = mcase
+	# print(CHANNEL_DATA.keys())
+	# sys.exit(1)    
 	dns = CHANNEL_DATA
-	print(dns['M6.0']['Data'].keys())
-	print(dns['M6.0']['Data']['bar_A'][0])
-	print(dns['M6.0']['Data']['bar_AB'][0])
-	print(dns['M6.0']['Data']['bar_ABC'][0])
-	print(dns['M6.0']['Data']['bar_rho_ABC'][0])
-	print(dns['M6.0']['Data']['bar_AB_gradC'][0])
-	print(dns['M6.0']['Data']['bar_A_gradB'][0])
-	print(dns['M6.0']['Data']['bar_rhoAppBpp'][0])
-	print(dns['M6.0']['Data']['bar_dtau_ij_dxl'][0]) # i first, then j, then l
-	print(dns['M6.0']['Data']['bar_dtau_ij_dxl'][1].shape) # i first, then j, then l
-	print(dns['M6.0']['Data']['bar_tau_ij_dul_dxm'][0]) # i first, then j, then l
-	print(dns['M6.0']['Data']['bar_tau_ij_dul_dxm'][1].shape) # i first, then j, then l
-	print(dns['M6.0']['Data']['bar_gradA'][0]) # i first, then j, then l
+	print(dns[mcase]['Data'].keys())
+	print(dns[mcase]['Data']['bar_A'][0])
+	print(dns[mcase]['Data']['bar_AB'][0])
+	print(dns[mcase]['Data']['bar_ABC'][0])
+	print(dns[mcase]['Data']['bar_rho_ABC'][0])
+	print(dns[mcase]['Data']['bar_AB_gradC'][0])
+	print(dns[mcase]['Data']['bar_A_gradB'][0])
+	print(dns[mcase]['Data']['bar_rhoAppBpp'][0])
+	print(dns[mcase]['Data']['bar_dtau_ij_dxl'][0]) # i first, then j, then l
+	print(dns[mcase]['Data']['bar_dtau_ij_dxl'][1].shape) # i first, then j, then l
+	print(dns[mcase]['Data']['bar_tau_ij_dul_dxm'][0]) # i first, then j, then l
+	print(dns[mcase]['Data']['bar_tau_ij_dul_dxm'][1].shape) # i first, then j, then l
+	print(dns[mcase]['Data']['bar_gradA'][0]) # i first, then j, then l
 
 	# (1, 250, 9, 3)
 	#  ^  ^    ^  ^ l
 	#  |  |    | i,j -> (i,j) -> (i-1)*3 + j
 	#  |  |
 	#  | redundant
-	print(dns['M6.0']['Data']['bar_tau_ij'][0])
-	print(dns['M6.0']['Data']['bar_ui_dtau_jl_dxm'][0]) # i first, then j, then l, then m
-	print(dns['M6.0']['Data']['bar_ui_dtau_jl_dxm'][1].shape) # i first, then j, then l, then m
-	print(dns['M6.0']['Data']['y'][0]) # i first, then j, then l, then m
+	print(dns[mcase]['Data']['bar_tau_ij'][0])
+	print(dns[mcase]['Data']['bar_ui_dtau_jl_dxm'][0]) # i first, then j, then l, then m
+	print(dns[mcase]['Data']['bar_ui_dtau_jl_dxm'][1].shape) # i first, then j, then l, then m
+	print(dns[mcase]['Data']['y'][0]) # i first, then j, then l, then m
 
 	# (1, 250, 9, 9)
 	#  ^       ^  ^ l,m -> (l,m) -> (l-1)*3 + m
 	#  |       | i,j -> (i,j) -> (i-1)*3 + j
 	#  |  ^
 	#  | redundant
-	N = dns['M6.0']['Data']['bar_ui_dtau_jl_dxm'][1].shape[0]
+	N = dns[mcase]['Data']['bar_ui_dtau_jl_dxm'][1].shape[0]
 
 	y       = []
 	A00     = []
@@ -116,16 +109,16 @@ def main():
 	alpha_t = []
 
 
-	tau_du = dns['M6.0']['Data']['bar_tau_ij_dul_dxm'][1]
-	tau    = dns['M6.0']['Data']['bar_tau_ij'][1]
-	grads  = dns['M6.0']['Data']['bar_gradA'][1]
-	vals   = dns['M6.0']['Data']['bar_A'][1]
-	vals2  = dns['M6.0']['Data']['bar_AB'][1]
-	dtau   = dns['M6.0']['Data']['bar_dtau_ij_dxl'][1]
-	yy     = dns['M6.0']['Data']['y'][1]
-	trips  = dns['M6.0']['Data']['bar_ABC'][1]
-	pps    = dns['M6.0']['Data']['bar_rhoAppBpp'][1]
-	rhoABC = dns['M6.0']['Data']['bar_rho_ABC'][1]
+	tau_du = dns[mcase]['Data']['bar_tau_ij_dul_dxm'][1]
+	tau    = dns[mcase]['Data']['bar_tau_ij'][1]
+	grads  = dns[mcase]['Data']['bar_gradA'][1]
+	vals   = dns[mcase]['Data']['bar_A'][1]
+	vals2  = dns[mcase]['Data']['bar_AB'][1]
+	dtau   = dns[mcase]['Data']['bar_dtau_ij_dxl'][1]
+	yy     = dns[mcase]['Data']['y'][1]
+	trips  = dns[mcase]['Data']['bar_ABC'][1]
+	pps    = dns[mcase]['Data']['bar_rhoAppBpp'][1]
+	rhoABC = dns[mcase]['Data']['bar_rho_ABC'][1]
 
 	# print(grads)
 	print(N, round(N/2))
