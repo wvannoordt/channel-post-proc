@@ -1,4 +1,5 @@
 #include "cmf.h"
+#include "timing.h"
 #include "transform_inplace.h"
 #include "range.h"
 #include "compute_average.h"
@@ -150,13 +151,17 @@ int main(int argc, char** argv)
 	{
 		std::string filename = strformat("data/restart_unk_nt_{}.dat", ZFill(start+skip*i[0], 8));
 		print("Reading", filename);
+		{scoped_tmr_t tt("read");
 		reader.LoadData(primsInst, filename);
-		
+		}
+		{scoped_tmr_t tt("transform");
 		transform_inplace(primsInst, cons2prim);
+		}
 		
 		double Tref = 100.0;
 		double mu_ref = 3e-4;
 		double npow = 0.76;
+		{scoped_tmr_t tt("average");
 		compute_average(primsInst,        y_bar.inst_data, [=](const cmf::Vec3<double>& xyz) -> double {return xyz[1];});
 		compute_average(primsInst,        U_bar.inst_data, [=](const prim_t<double>& prim)   -> double {return prim.u();});
 		compute_average(primsInst,        V_bar.inst_data, [=](const prim_t<double>& prim)   -> double {return prim.v();});
@@ -251,7 +256,8 @@ int main(int argc, char** argv)
 			double kappa = visc.calc_visc(prim)/prandtl;
 			return -kappa*prim_grad[1].T();
 		});
-		
+		}
+		{scoped_tmr_t tt("viscdiff");
 		compute_viscdif(primsInst, visc,
 			tau_g_00_0_bar.inst_data,
 			tau_g_01_1_bar.inst_data,
@@ -262,7 +268,10 @@ int main(int argc, char** argv)
 			tau_g_20_0_bar.inst_data,
 			tau_g_21_1_bar.inst_data,
 			tau_g_22_2_bar.inst_data);
+		}
+		{scoped_tmr_t tt("accumulate");
 		for (auto a:registry) a->accum();
+		}
 	}
 	
 	std::vector<double> upp_upp(ny, 0.0);
