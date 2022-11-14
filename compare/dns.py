@@ -6,7 +6,8 @@ def main():
 	objects = []
 
 	# Main_File_Name = 'purdue/DNS_Channel_dimensional_M6.0_Reb20000_500x250x300.p'
-	Main_File_Name = 'purdue/DNS_Channel_three_Mach_numbers.p'
+	# Main_File_Name = 'purdue/DNS_Channel_three_Mach_numbers.p'
+	Main_File_Name = 'purdue/DNS_CHANNEL.p'
 	f = open(Main_File_Name, 'rb')
 	CHANNEL_DATA = pickle.load(f,encoding='latin1')
 	f.close()
@@ -17,39 +18,39 @@ def main():
 		mcase = sys.argv[1]
 		print("using {}".format(mcase))
 	# print(CHANNEL_DATA.keys())
-	# sys.exit(1)    
 	dns = CHANNEL_DATA
-	print(dns[mcase]['Info'])
-	print(dns[mcase]['Data'].keys())
-	print(dns[mcase]['Data']['bar_A'][0])
-	print(dns[mcase]['Data']['bar_AB'][0])
-	print(dns[mcase]['Data']['bar_ABC'][0])
-	print(dns[mcase]['Data']['bar_rho_ABC'][0])
-	print(dns[mcase]['Data']['bar_AB_gradC'][0])
-	print(dns[mcase]['Data']['bar_A_gradB'][0])
-	print(dns[mcase]['Data']['bar_rhoAppBpp'][0])
-	print(dns[mcase]['Data']['bar_dtau_ij_dxl'][0]) # i first, then j, then l
-	print(dns[mcase]['Data']['bar_dtau_ij_dxl'][1].shape) # i first, then j, then l
-	print(dns[mcase]['Data']['bar_tau_ij_dul_dxm'][0]) # i first, then j, then l
-	print(dns[mcase]['Data']['bar_tau_ij_dul_dxm'][1].shape) # i first, then j, then l
-	print(dns[mcase]['Data']['bar_gradA'][0]) # i first, then j, then l
+	# data_dict = dns[mcase]['Reb40k']['16.0x2.0x4.0_400x200x240']
+	data_dict = dns[mcase]['Reb20k']['16.0x2.0x4.0_500x250x300']
+	
+	print(data_dict['bar_A'][0])
+	print(data_dict['bar_AB'][0])
+	print(data_dict['bar_ABC'][0])
+	print(data_dict['bar_rho_ABC'][0])
+	print(data_dict['bar_AB_gradC'][0])
+	print(data_dict['bar_A_gradB'][0])
+	print(data_dict['bar_rhoAppBpp'][0])
+	print(data_dict['bar_dtau_ij_dxl'][0]) # i first, then j, then l
+	print(data_dict['bar_dtau_ij_dxl'][1].shape) # i first, then j, then l
+	print(data_dict['bar_tau_ij_dul_dxm'][0]) # i first, then j, then l
+	print(data_dict['bar_tau_ij_dul_dxm'][1].shape) # i first, then j, then l
+	print(data_dict['bar_gradA'][0]) # i first, then j, then l
 
 	# (1, 250, 9, 3)
 	#  ^  ^    ^  ^ l
 	#  |  |    | i,j -> (i,j) -> (i-1)*3 + j
 	#  |  |
 	#  | redundant
-	print(dns[mcase]['Data']['bar_tau_ij'][0])
-	print(dns[mcase]['Data']['bar_ui_dtau_jl_dxm'][0]) # i first, then j, then l, then m
-	print(dns[mcase]['Data']['bar_ui_dtau_jl_dxm'][1].shape) # i first, then j, then l, then m
-	print(dns[mcase]['Data']['y'][0]) # i first, then j, then l, then m
+	print(data_dict['bar_tau_ij'][0])
+	print(data_dict['bar_ui_dtau_jl_dxm'][0]) # i first, then j, then l, then m
+	print(data_dict['bar_ui_dtau_jl_dxm'][1].shape) # i first, then j, then l, then m
+	print(data_dict['y'][0]) # i first, then j, then l, then m
 
 	# (1, 250, 9, 9)
 	#  ^       ^  ^ l,m -> (l,m) -> (l-1)*3 + m
 	#  |       | i,j -> (i,j) -> (i-1)*3 + j
 	#  |  ^
 	#  | redundant
-	N = dns[mcase]['Data']['bar_ui_dtau_jl_dxm'][1].shape[0]
+	N = data_dict['bar_ui_dtau_jl_dxm'][1].shape[0]
 
 	y       = []
 	A00     = []
@@ -113,16 +114,18 @@ def main():
 	alpha_t = []
 
 
-	tau_du = dns[mcase]['Data']['bar_tau_ij_dul_dxm'][1]
-	tau    = dns[mcase]['Data']['bar_tau_ij'][1]
-	grads  = dns[mcase]['Data']['bar_gradA'][1]
-	vals   = dns[mcase]['Data']['bar_A'][1]
-	vals2  = dns[mcase]['Data']['bar_AB'][1]
-	dtau   = dns[mcase]['Data']['bar_dtau_ij_dxl'][1]
-	yy     = dns[mcase]['Data']['y'][1]
-	trips  = dns[mcase]['Data']['bar_ABC'][1]
-	pps    = dns[mcase]['Data']['bar_rhoAppBpp'][1]
-	rhoABC = dns[mcase]['Data']['bar_rho_ABC'][1]
+	tau_du = data_dict['bar_tau_ij_dul_dxm'][1]
+	tau    = data_dict['bar_tau_ij'][1]
+	grads  = data_dict['bar_gradA'][1]
+	vals   = data_dict['bar_A'][1]
+	vals2  = data_dict['bar_AB'][1]
+	dtau   = data_dict['bar_dtau_ij_dxl'][1]
+	yy     = data_dict['y'][1]
+	trips  = data_dict['bar_ABC'][1]
+	pps    = data_dict['bar_rhoAppBpp'][1]
+	rhoABC = data_dict['bar_rho_ABC'][1]
+	
+	
 
 	# print(grads)
 	print(N, round(N/2))
@@ -133,6 +136,8 @@ def main():
 		v_bar.append(vals[i][2])
 		w_bar.append(vals[i][3])
 		T_bar.append(vals[i][5])
+		# print(dns[mcase]['Reb40k']['16.0x2.0x4.0_400x200x240'])
+		# sys.exit(1)
 		u_tld.append(vals2[i][0]/vals[i][0])
 		v_tld.append(vals2[i][1]/vals[i][0])
 		w_tld.append(vals2[i][2]/vals[i][0])
@@ -210,6 +215,10 @@ def main():
 	write_csv(y, uT_pp,   'purdue/cs-uTpp.csv')
 	write_csv(y, vT_pp,   'purdue/cs-vTpp.csv')
 	write_csv(y, wT_pp,   'purdue/cs-wTpp.csv')
+	
+	write_csv(y, u_bar,   'purdue/cs-ubar.csv')
+	write_csv(y, T_bar,   'purdue/cs-Tbar.csv')
+	write_csv(y, p,       'purdue/cs-Pbar.csv')
 	
 	write_csv(y, rhovT,   'purdue/bal-cs-rhovT.csv')
 	write_csv(y, rhovk,   'purdue/bal-cs-rhovk.csv')
